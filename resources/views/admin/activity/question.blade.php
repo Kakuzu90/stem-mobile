@@ -8,30 +8,15 @@
     @endif
 @endsection
 
+@section('plugin')
+    <link rel="stylesheet" href="{{ asset('app-assets/css/pages/app-file-manager.min.css') }}">
+@endsection
+
 @section('body')
-<div class="content-header row">
-    <div class="content-header-left col-md-9 col-12 mb-2">
-        <div class="row breadcrumbs-top">
-            <div class="col-12">
-                <h2 class="content-header-title float-start mb-0">Questions for {{ $activity->title }}</h2>
-                <div class="breadcrumb-wrapper">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="javascript:void(;)">Informations</a>
-                        </li>
-                        <li class="breadcrumb-item active">
-                            Questions for {{ $activity->title }}
-                        </li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
+    <question />
 @endsection
 
 @section('scripts')
-
+    <script src="{{ asset('app-assets/js/scripts/pages/app-file-manager.min.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
 @endsection

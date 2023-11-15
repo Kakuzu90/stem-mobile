@@ -185,7 +185,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item {{ isActive('admin.activities.index') }}">
+                <li class="nav-item {{ isActive(['admin.activities.index', 'admin.activities.questions']) }}">
                     <a href="{{ route('admin.activities.index') }}" class="d-flex align-items-center">
                         <i data-feather='book'></i>
                         <span class="menu-title text-truncate" data-i18n="Activities">Activities</span>
@@ -195,10 +195,10 @@
         </div>
     </div>
 
-    <div class="app-content content" id="app">
+    <div class="app-content content {{ request()->route()->getName() === 'admin.activities.questions' ? 'file-manager-application' : null }}" id="app">
         <div class="content-overlay"></div>
         <div class="header-navbar-shadow"></div>
-        <div class="content-wrapper container-xxl p-0">
+        <div class="{{ request()->route()->getName() === 'admin.activities.questions' ? 'content-area-wrapper' : 'content-wrapper' }} container-xxl p-0">
             @yield('body')
         </div>
     </div>
@@ -235,6 +235,22 @@
 
     <script src="{{ asset('app-assets/js/core/app-menu.js') }}"></script>
     <script src="{{ asset('app-assets/js/core/app.js') }}"></script>
+
+    {{-- @if (in_array(request()->route()->getName(), ['admin.activities.questions']))
+        <script>
+            $.blockUI({
+                message: '<div class="spinner-border text-primary" role="status"></div>',
+                css: {
+                    backgroundColor: 'transparent',
+                    border: '0'
+                },
+                overlayCSS: {
+                    backgroundColor: '#fff',
+                    opacity: 0.8
+                }
+            });
+        </script>
+    @endif --}}
 
     @include('toastr')
     @yield('scripts')
