@@ -53,7 +53,7 @@
         <div class="modal-footer">
             <button type="submit" class="btn btn-relief-primary">
                 <i data-feather="database"></i>
-                Upload File
+                Submit
             </button>
         </div>
     </form>

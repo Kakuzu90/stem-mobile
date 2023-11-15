@@ -13,7 +13,7 @@ class ActivityRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,12 @@ class ActivityRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'title' => ['required'],
+            'classroom' => ['required', 'numeric'],
+            'subjects' => ['required', 'array'],
+            'timer' => ['required'],
+            'type' => ['required', 'numeric'],
+            'publish' => ['nullable', 'numeric'],
         ];
     }
 }

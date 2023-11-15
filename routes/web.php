@@ -91,6 +91,8 @@ Route::prefix('administrator')
             Route::apiResource('announcements', AnnouncementController::class);
             Route::get('modules/{module}/{classroom}/subjects', [ModuleController::class, 'subjects'])->name('modules.subjects');
             Route::apiResource('modules', ModuleController::class);
+            Route::get('activities/{activity}/questions', [ActivityController::class, 'question'])->name('activities.questions');
+            Route::get('activities/{activity}/{classroom}/subjects', [ActivityController::class, 'subjects'])->name('activities.subjects');
             Route::apiResource('activities', ActivityController::class);
         });
 

@@ -26,11 +26,11 @@ class Activity extends BaseModel
     }
 
     public function subjects() {
-        return $this->belongsToMany(Subject::class, 'classroom_activity');
+        return $this->hasMany(ClassroomActivity::class)->select('subject_id')->groupBy('subject_id');
     }
 
     public function classrooms() {
-        return $this->belongsToMany(Classroom::class, 'classroom_activity');
+        return $this->hasMany(ClassroomActivity::class)->select('classroom_id')->groupBy('classroom_id');
     }
 
     public function activity_sections() {
@@ -55,10 +55,10 @@ class Activity extends BaseModel
 
     public function type_color() {
         if ($this->type === BaseModel::QUIZ) {
-            return 'warning';
+            return 'info';
         }
 
-        return 'danger';
+        return 'dark';
     }
 
     public function status() {
