@@ -236,7 +236,7 @@
     <script src="{{ asset('app-assets/js/core/app-menu.js') }}"></script>
     <script src="{{ asset('app-assets/js/core/app.js') }}"></script>
 
-    {{-- @if (in_array(request()->route()->getName(), ['admin.activities.questions']))
+    @if (in_array(request()->route()->getName(), ['admin.activities.questions']))
         <script>
             $.blockUI({
                 message: '<div class="spinner-border text-primary" role="status"></div>',
@@ -250,7 +250,7 @@
                 }
             });
         </script>
-    @endif --}}
+    @endif
 
     @include('toastr')
     @yield('scripts')

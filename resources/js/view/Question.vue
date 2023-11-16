@@ -6,7 +6,9 @@
                 <div class="p-2 border-bottom">
                     <button 
                         class="btn btn-relief-primary add-file-btn text-center w-100" 
-                        type="button">
+                        type="button"
+                        @click="modalSection"
+                        >
                         <span class="align-middle">Add Section</span>
                     </button>
                 </div>
@@ -14,10 +16,11 @@
                 <div class="sidebar-list">
                     <div class="list-group">
                         <a 
-                            href="javascript:void(;)" 
-                            class="list-group-item list-group-item-action active">
-                            <i data-feather="star" class="me-50 font-medium-3"></i>
-                            <span class="align-middle">Test I. Multiple Choice</span>
+                            v-for="(questionnaire, index) in questionnaires"
+                            :key="index"
+                            @click="setActiveSection(index)"
+                            class="list-group-item list-group-item-action" :class="{'active': index === activeSection}">
+                            <span class="align-middle">{{ questionnaire.title }}</span>
                         </a>
                     </div>
                 </div>
@@ -37,90 +40,70 @@
                         <button
                             type="button"
                             class="btn btn-relief-success me-25"
+                            :disabled="disableIfEmpty"
                         >
                             <span class="align-middle">Save Changes</span>
                         </button>
                         <button
                             type="button"
                             class="btn btn-relief-warning me-25"
+                            :disabled="disableIfEmpty"
                         >
                             <span class="align-middle">Show Answers</span>
                         </button>
                         <button
                             type="button"
                             class="btn btn-relief-primary"
+                            :disabled="disableIfEmpty"
+                            @click="modalQuestion"
                         >
                             <span class="align-middle">Add Question</span>
                         </button>
                     </div>
                 </div>
                 <div class="file-manager-content-body pb-2">
-                    <h4 class="text-dark fw-bolder mb-0">
-                        Test I. Multiple Choice
+                    <h4 class="text-dark fw-bolder mb-0" v-if="sectionQuestions">
+                        {{ sectionQuestions.title }}
+                        <span class="cursor-pointer" @click="openEditSectionModal">
+                            <vue-feather type="edit-2" size="15" />
+                        </span>
                     </h4>
-                    <p>
-                        <span class="text-danger fw-bold">Direction:</span> Please select 1 answer only
+                    <p v-if="sectionQuestions">
+                        <span class="text-danger fw-bold">Direction:</span> {{ sectionQuestions.direction }}
                     </p>
                     <div class="row g-1">
-                        <div class="col-12">
+                        <div class="col-12"
+                            v-for="(question, questionIndex) in sectionQuestions?.questions"
+                            :key="questionIndex"
+                        >
                             <div class="border rounded p-1">
                                 <div class="d-flex justify-content-end align-items-center">
                                     <button
                                         type="button"
                                         class="btn btn-sm btn-icon btn-relief-success me-25"
                                     >
-                                        <i data-feather="edit"></i>
+                                        <vue-feather type="edit-2" size="14"></vue-feather>
                                     </button>
                                     <button
                                         type="button"
                                         class="btn btn-sm btn-icon btn-relief-danger"
                                     >
-                                        <i data-feather="trash-2"></i>
+                                    <vue-feather type="trash-2" size="14"></vue-feather>
                                     </button>
                                 </div>
                                 <p class="mb-0 text-dark">
-                                    1. What is your favorite color? <span class="text-warning fw-bolder">(5 points)</span>
+                                    {{ questionIndex + 1 }}. {{ question.question }} <span class="text-warning fw-bolder">({{ question.points }} points)</span>
                                 </p>
                                 <span class="text-muted">
-                                    Direction: Sample direction here
+                                    Direction: {{ question.direction }}
                                 </span>
-                                <div class="row justify-content-center align-items-center mt-1">
-                                    <div class="col-6">
-                                        <span class="fw-bolder text-dark">A.</span> Red
+                                <div class="row justify-content-center align-items-center mt-1" v-if="question.question_type === 1">
+                                    <div class="col-6"
+                                        v-for="(choice, choiceIndex) in question.choices"
+                                        :key="choice + '-key'"
+                                    >
+                                        <span class="fw-bolder text-dark">Choice {{ choiceIndex + 1 }}.</span> {{ choice }}
                                     </div>
-                                    <div class="col-6">
-                                        <span class="fw-bolder text-dark">B.</span> Blue
-                                    </div>
-                                    <div class="col-6">
-                                        <span class="fw-bolder text-dark">C.</span> Green
-                                    </div>
-                                    <div class="col-6">
-                                        <span class="fw-bolder text-dark">D.</span> Yellow
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="border rounded p-1">
-                                <p class="mb-0 text-dark">
-                                    2. NORSU-BSC? <span class="text-warning fw-bolder">(10 points)</span>
-                                </p>
-                                <span class="text-muted">
-                                    Direction: Sample direction here
-                                </span>
-                                <input type="text" placeholder="Answer Here" class="form-control mt-1" readonly />
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="border rounded p-1">
-                                <p class="mb-0 text-dark">
-                                    3. 1+1. Show your solution <span class="text-warning fw-bolder">(10 points)</span>
-                                </p>
-                                <span class="text-muted">
-                                    Direction: Sample direction here
-                                </span>
-                                <div class="mt-1">
-                                    <img src="/images/placeholder.png" class="img-fluid" alt="Placeholder Image"/>
                                 </div>
                             </div>
                         </div>
@@ -130,14 +113,319 @@
         </div>
     </div>
 </div>
+
+<modal id="section">
+    <template #body>
+        <h1 class="address-title text-center mb-1">Add New Section</h1>
+        <div class="mb-1">
+            <label class="form-label">Title</label>
+            <div 
+                class="input-group input-group-merge"
+                :class="{'is-invalid' : errors.title}"
+            >
+                <span class="input-group-text">
+                    <vue-feather type="book" size="14"></vue-feather>
+                </span>
+                <input 
+                    type="text"
+                    class="form-control"
+                    :class="{'is-invalid' : errors.title}" 
+                    name="title" 
+                    placeholder="Enter title here" 
+                    v-model="form.title"
+                    @input="clearError('title')"
+                    />
+            </div>
+            <span class="invalid-feedback" v-if="errors.title">{{ errors.title }}</span>
+        </div>
+        <div class="mb-1">
+            <label class="form-label">Direction: <span class="text-muted">(Optional)</span></label>
+            <textarea class="form-control" placeholder="Enter direction here" v-model="form.direction"></textarea>
+        </div>
+        <div class="d-flex justify-content-end align-items-center">
+            <button
+                type="button"
+                class="btn"
+                :class="{'btn-relief-primary' : !editSection, 'btn-relief-warning' : editSection}"
+                @click="addSection"
+            >
+                <i data-feather="database"></i> {{ editSection ? 'Update Section' : 'Add Section' }}
+            </button>
+        </div>
+    </template>
+</modal>
+
+<modal id="question">
+    <template #body>
+        <h1 class="address-title text-center mb-1">Add New Question</h1>
+        <div class="mb-1">
+            <input 
+                type="file"
+                class="form-control" 
+                @change="handleUpload"
+                accept="image/*"
+                placeholder="Select a file" 
+                />
+        </div>
+        <div class="mb-1">
+            <label class="form-label">Question</label>
+            <textarea class="form-control" :class="{'is-invalid' : errors.question}" @input="clearError('question')" placeholder="Enter question here" v-model="form.question"></textarea>
+            <span class="invalid-feedback" v-if="errors.question">
+                {{ errors.question }}
+            </span>
+        </div>
+        <div class="mb-1">
+            <label class="form-label">Direction: <span class="text-muted">(Optional)</span></label>
+            <textarea class="form-control" placeholder="Enter direction here" v-model="form.direction"></textarea>
+        </div>
+        <div class="mb-1">
+            <label class="form-label">Question Type</label>
+            <v-select 
+            placeholder="Select a question type"
+            :class="{'is-invalid' : errors.question_type}"
+            :options="[{label: 'Multiple Choice', value: 1}, {label: 'Identification', value:3}, {label: 'Image', value: 2}]"
+            v-model="form.question_type"
+            :reduce="(e)=>e.value"
+            />
+            <span class="invalid-feedback" v-if="errors.question_type">
+                {{ errors.question_type }}
+            </span>
+        </div>
+        <div class="mb-1" v-if="form.question_type === 1">
+            <label class="form-label">Choices</label>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="col-11">
+                    <div class="input-group input-group-merge"
+                        :class="{'is-invalid' : errors.choice}">
+                        <span class="input-group-text">
+                            <vue-feather type="grid" size="14"></vue-feather>
+                        </span>
+                        <input 
+                            type="text"
+                            class="form-control" 
+                            :class="{'is-invalid' : errors.choice}"
+                            placeholder="Enter choice here" 
+                            v-model="form.choice"
+                            @input="clearError('choice')"
+                            @keyup.enter="addChoices"
+                            />
+                    </div>
+                    <span class="invalid-feedback" v-if="errors.choice">
+                        {{ errors.choice }}
+                    </span>
+                </div>
+                <button type="button" class="ms-25 btn btn-icon btn-sm btn-relief-primary"
+                    @click="addChoices"
+                >
+                    <vue-feather type="plus" size="14"></vue-feather>
+                </button>
+            </div>
+            <div class="mt-50">
+                <span 
+                    class="badge badge-pill bg-light-primary me-25"
+                    v-for="(choice, index) in form.choices"
+                    :key="index"
+                >{{ choice }}</span>
+            </div>
+        </div>
+        <div class="mb-1" v-if="form.question_type !== 2">
+            <label class="form-label">Answer</label>
+            <div class="input-group input-group-merge"
+            :class="{'is-invalid' : errors.answer}">
+                <span class="input-group-text">
+                    <vue-feather type="key" size="14"></vue-feather>
+                </span>
+                <input 
+                    type="text"
+                    class="form-control" 
+                    :class="{'is-invalid' : errors.answer}"
+                    placeholder="Enter answer here" 
+                    v-model="form.answer"
+                    @input="clearError('answer')"
+                    />
+            </div>
+            <span class="invalid-feedback" v-if="errors.answer">
+                {{ errors.answer }}
+            </span>
+        </div>
+        <div class="mb-1">
+            <label class="form-label">Points</label>
+            <div class="input-group input-group-merge"
+            :class="{'is-invalid' : errors.points}">
+                <span class="input-group-text">
+                    <vue-feather type="plus-circle" size="14"></vue-feather>
+                </span>
+                <input 
+                    type="number"
+                    class="form-control" 
+                    :class="{'is-invalid' : errors.points}"
+                    placeholder="Enter points here" 
+                    v-model="form.points"
+                    @input="clearError('points')"
+                    />
+            </div>
+            <span class="invalid-feedback" v-if="errors.points">
+                {{ errors.points }}
+            </span>
+        </div>
+        <div class="d-flex justify-content-end align-items-center">
+            <button
+                type="button"
+                class="btn"
+                :class="{'btn-relief-primary' : !editQuestion, 'btn-relief-warning' : editQuestion}"
+                @click="addQuestion"
+            >
+                <i data-feather="database"></i> {{ editQuestion ? 'Update Question' : 'Add Question' }}
+            </button>
+        </div>
+    </template>
+</modal>
 </template>
 
 <script>
+import Modal from '../components/Modal';
+
 export default {
+  components: {
+    Modal
+  },
+  data() {
+    return {
+        errors: {},
+        questionnaires: [],
+        form: {},
+        activeSection: 0,
+        editSection: false,
+        editQuestion: false,
+    }
+  },
   mounted() {
     this.hideLoader();
   },
+  watch: {
+    'form.question_type' : function(newValue, oldValue) {
+        if (newValue === 2 || newValue === 3) {
+            delete this.form.choices;
+        }
+    }
+  },
+  computed: {
+    sectionQuestions() {
+        return this.questionnaires[this.activeSection];
+    },
+    disableIfEmpty() {
+        return this.questionnaires.length === 0;
+    }
+  },
   methods: {
+    modalSection() {
+        $('#section').modal('show');
+    },
+    modalQuestion() {
+        if (this.questionnaires.length > 0) {
+            $('#question').modal('show');
+        }
+    },
+    modalAnswer() {
+        if (this.questionnaires.length > 0) {
+            $('#answer').modal('show');
+        }
+    },
+    closeSection() {
+        $('#section').modal('hide');
+    },
+    closeQuestion() {
+        $('#question').modal('hide');
+    },
+    closeAnswer() {
+        $('#answer').modal('hide');
+    },
+    setActiveSection(index) {
+        this.activeSection = index;
+    },
+    addSection(){
+        if (!this.form.title) {
+            this.errors.title = 'The title field is required';
+            return;
+        }
+        const skeleton = {
+            title: this.form.title,
+            direction: this.form.direction,
+            questions: [],
+        };
+        if (this.editSection) {
+            this.questionnaires[this.activeSection].title = this.form.title;
+            this.questionnaires[this.activeSection].direction = this.form.direction;
+            this.editSection = false;
+        }else {
+            this.questionnaires.push(skeleton);
+            this.activeSection = this.questionnaires.length - 1;
+        }
+        this.closeSection();
+        this.clearForm();
+    },
+    addQuestion() {
+
+        if (!this.form.question) {
+            this.errors.question = 'The question field is required';
+        }
+
+        if (!this.form.question_type) {
+            this.errors.question_type = 'The question type field is required';
+        }
+
+        if (this.form.question_type === 1 && !this.form.hasOwnProperty('choices')) {
+            this.errors.choice = 'The choice field is required';
+        }
+
+        if (!this.form.answer) {
+            this.errors.answer = 'The answer field is required';
+        }
+
+        if (!this.form.points) {
+            this.errors.points = 'The points field is required';
+        }
+
+        if (Object.entries(this.errors).length === 0) {
+            const skeleton = {
+                question : this.form.question,
+                direction: this.form.direction ?? null,
+                file: this.with_image ?? null,
+                image_url : this.image_url ?? null,
+                question_type: this.form.question_type,
+                choices: this.form.choices ?? null,
+                answer: this.form.answer ?? null,
+                points: this.form.points
+            };
+            this.questionnaires[this.activeSection].questions.push(skeleton)
+            this.closeQuestion();
+            this.clearForm();
+        }
+    },
+    addChoices() {
+        if (!this.form.choice) {
+            this.errors.choice = 'The choice field is required';
+        }
+        this.form.choices = this.form.choices ?? []
+        this.form.choices.push(this.form.choice);
+        this.form.choice = null;
+    },
+    handleUpload(event) {
+        this.form.with_image = event.target.files[0];
+        this.form.image_url = URL.createObjectURL(event.target.files[0]);
+    },
+    openEditSectionModal() {
+        this.editSection = true;
+        this.form.title = this.sectionQuestions.title;
+        this.form.direction = this.sectionQuestions.direction;
+        this.modalSection();
+    },
+    clearForm() {
+        this.form = {};
+    },
+    clearError(field) {
+        delete this.errors[field];
+    },
     hideLoader() {
       $.unblockUI();
     }
