@@ -6,7 +6,8 @@
             <button 
               type="button" 
               class="btn-close" 
-              data-bs-dismiss="modal" 
+              data-bs-dismiss="modal"
+              @click="close"
               aria-label="Close"></button>
         </div>
         <div class="modal-body pb-5 px-sm-4 mx-50">
@@ -20,5 +21,10 @@
 <script>
 export default {
   props: ['id'],
+  methods: {
+    close() {
+      this.$emit('close', true);
+    }
+  }
 }
 </script>

@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 
 class Question extends BaseModel
 {
@@ -30,7 +31,20 @@ class Question extends BaseModel
     }
     
     public function random_choices() {
-        $choices = json_decode($this->choices);
-        return shuffle($choices);
+        return shuffle($this->choices);
+    }
+
+    public function image() {
+        if ($this->with_image_path) {
+            $path = storage_path('app/public/questions/' . $this->with_image_path);
+            
+            $file = File::get($path);
+            $type = File::mimeType($path);
+
+            $response = Response::make($file, 200);
+            $response->header('Content-Type', $type);
+
+            return $response;
+        }
     }
 }

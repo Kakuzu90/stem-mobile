@@ -14,7 +14,7 @@
 @endsection
 
 @section('body')
-    <question />
+    <question api="{{ route('api.admin.activities.index', $activity->id) }}" image="{{ route('api.admin.image') }}" />
 @endsection
 
 @section('scripts')

@@ -41,15 +41,9 @@
                             type="button"
                             class="btn btn-relief-success me-25"
                             :disabled="disableIfEmpty"
+                            @click="submit"
                         >
                             <span class="align-middle">Save Changes</span>
-                        </button>
-                        <button
-                            type="button"
-                            class="btn btn-relief-warning me-25"
-                            :disabled="disableIfEmpty"
-                        >
-                            <span class="align-middle">Show Answers</span>
                         </button>
                         <button
                             type="button"
@@ -67,9 +61,12 @@
                         <span class="cursor-pointer" @click="openEditSectionModal">
                             <vue-feather type="edit-2" size="15" />
                         </span>
+                        <span class="cursor-pointer ms-25" @click="deleteSection">
+                            <vue-feather type="trash-2" size="15" />
+                        </span>
                     </h4>
                     <p v-if="sectionQuestions">
-                        <span class="text-danger fw-bold">Direction:</span> {{ sectionQuestions.direction }}
+                        <span class="text-danger fw-bold">Direction:</span> {{ sectionQuestions.direction ?? 'No direction' }}
                     </p>
                     <div class="row g-1">
                         <div class="col-12"
@@ -81,12 +78,14 @@
                                     <button
                                         type="button"
                                         class="btn btn-sm btn-icon btn-relief-success me-25"
+                                        @click="openEditQuestionModal(questionIndex)"
                                     >
                                         <vue-feather type="edit-2" size="14"></vue-feather>
                                     </button>
                                     <button
                                         type="button"
                                         class="btn btn-sm btn-icon btn-relief-danger"
+                                        @click="deleteQuestion(questionIndex)"
                                     >
                                     <vue-feather type="trash-2" size="14"></vue-feather>
                                     </button>
@@ -95,8 +94,11 @@
                                     {{ questionIndex + 1 }}. {{ question.question }} <span class="text-warning fw-bolder">({{ question.points }} points)</span>
                                 </p>
                                 <span class="text-muted">
-                                    Direction: {{ question.direction }}
+                                    Direction: {{ question.direction ?? 'No direction' }}
                                 </span>
+                                <div class="d-flex justify-content-center align-items-center" v-if="question.question_type === 2">
+                                    <img :src="srcImage(question)" height="250" alt="Image" />
+                                </div>
                                 <div class="row justify-content-center align-items-center mt-1" v-if="question.question_type === 1">
                                     <div class="col-6"
                                         v-for="(choice, choiceIndex) in question.choices"
@@ -105,6 +107,7 @@
                                         <span class="fw-bolder text-dark">Choice {{ choiceIndex + 1 }}.</span> {{ choice }}
                                     </div>
                                 </div>
+                                <p class="text-danger fw-bolder mt-1">Answer: <span class="text-dark">{{ question.answer ?? 'Manual Check' }}</span></p>
                             </div>
                         </div>
                     </div>
@@ -114,7 +117,7 @@
     </div>
 </div>
 
-<modal id="section">
+<modal id="section" @close="clearForm">
     <template #body>
         <h1 class="address-title text-center mb-1">Add New Section</h1>
         <div class="mb-1">
@@ -133,6 +136,7 @@
                     name="title" 
                     placeholder="Enter title here" 
                     v-model="form.title"
+                    @keypress.enter="addSection"
                     @input="clearError('title')"
                     />
             </div>
@@ -155,17 +159,23 @@
     </template>
 </modal>
 
-<modal id="question">
+<modal id="question" @close="clearForm">
     <template #body>
         <h1 class="address-title text-center mb-1">Add New Question</h1>
         <div class="mb-1">
             <input 
+                ref="file"
                 type="file"
-                class="form-control" 
+                class="form-control"
+                :class="{'is-invalid' : errors.with_image}"
+                @input="clearError('with_image')"
                 @change="handleUpload"
                 accept="image/*"
                 placeholder="Select a file" 
                 />
+            <span class="invalid-feedback" v-if="errors.with_image">
+                {{ errors.with_image }}
+            </span>
         </div>
         <div class="mb-1">
             <label class="form-label">Question</label>
@@ -286,6 +296,7 @@
 import Modal from '../components/Modal';
 
 export default {
+  props: ['api', 'image'],
   components: {
     Modal
   },
@@ -294,16 +305,21 @@ export default {
         errors: {},
         questionnaires: [],
         form: {},
+        deleted: {sections: [], questions:[]},
         activeSection: 0,
+        selectedQuestionIndex: 0,
         editSection: false,
         editQuestion: false,
     }
   },
   mounted() {
-    this.hideLoader();
+    this.getQuestionnaires();
   },
   watch: {
     'form.question_type' : function(newValue, oldValue) {
+        if (this.errors.with_image && newValue !== 2) {
+            delete this.errors.with_image;
+        }
         if (newValue === 2 || newValue === 3) {
             delete this.form.choices;
         }
@@ -318,6 +334,51 @@ export default {
     }
   },
   methods: {
+    getQuestionnaires() {
+        axios.get(this.api)
+            .then((response) => {
+                this.questionnaires = response.data.data;
+                this.hideLoader();
+            })
+    },
+    submit() {
+        this.showLoader();
+        let formData = new FormData();
+
+        this.questionnaires.forEach((questionnaire, index) => {
+            if (questionnaire.id) {
+                formData.append(`questionnaires[${index}][id]`, questionnaire.id)
+            }
+            formData.append(`questionnaires[${index}][title]`, questionnaire.title)
+            formData.append(`questionnaires[${index}][direction]`, questionnaire.direction)
+            questionnaire.questions.forEach((question, indexQ) => {
+                if (question.id) {
+                    formData.append(`questionnaires[${index}][questions][${indexQ}][id]`, question.id)
+                }
+                formData.append(`questionnaires[${index}][questions][${indexQ}][question]`, question.question)
+                formData.append(`questionnaires[${index}][questions][${indexQ}][direction]`, question.direction)
+                formData.append(`questionnaires[${index}][questions][${indexQ}][image]`, question.image)
+                formData.append(`questionnaires[${index}][questions][${indexQ}][question_type]`, question.question_type)
+                formData.append(`questionnaires[${index}][questions][${indexQ}][choices]`, JSON.stringify(question.choices))
+                formData.append(`questionnaires[${index}][questions][${indexQ}][answer]`, question.answer)
+                formData.append(`questionnaires[${index}][questions][${indexQ}][points]`, question.points)
+            });
+        });
+
+        formData.append('deleted', JSON.stringify(this.deleted));
+        
+        axios.post(this.api + '/store', formData, {headers: {'Content-Type' : 'multipart/form-data'}})
+        .then(() => {
+            this.hideLoader();
+            toastr['success']('Questions has been successfully saved', 'Questions Saved', {
+                positionClass: 'toast-bottom-right',
+                closeButton: true,
+                tapToDismiss: false,
+                progressBar: true,
+                rtl: false
+            });
+        })
+    },
     modalSection() {
         $('#section').modal('show');
     },
@@ -326,19 +387,11 @@ export default {
             $('#question').modal('show');
         }
     },
-    modalAnswer() {
-        if (this.questionnaires.length > 0) {
-            $('#answer').modal('show');
-        }
-    },
     closeSection() {
         $('#section').modal('hide');
     },
     closeQuestion() {
         $('#question').modal('hide');
-    },
-    closeAnswer() {
-        $('#answer').modal('hide');
     },
     setActiveSection(index) {
         this.activeSection = index;
@@ -378,8 +431,12 @@ export default {
             this.errors.choice = 'The choice field is required';
         }
 
-        if (!this.form.answer) {
+        if (this.form.question_type !== 2 && !this.form.answer) {
             this.errors.answer = 'The answer field is required';
+        }
+
+        if (!this.editQuestion && this.form.question_type === 2 && !this.form.with_image) {
+            this.errors.with_image = 'Please chooce a file first';
         }
 
         if (!this.form.points) {
@@ -389,24 +446,40 @@ export default {
         if (Object.entries(this.errors).length === 0) {
             const skeleton = {
                 question : this.form.question,
-                direction: this.form.direction ?? null,
-                file: this.with_image ?? null,
-                image_url : this.image_url ?? null,
+                direction: this.form.direction,
+                image: this.form.with_image ?? null,
+                image_url : this.form.image_url ?? null,
                 question_type: this.form.question_type,
                 choices: this.form.choices ?? null,
                 answer: this.form.answer ?? null,
                 points: this.form.points
             };
-            this.questionnaires[this.activeSection].questions.push(skeleton)
+            if (this.editQuestion) {
+                const selectedQuestion = this.sectionQuestions.questions[this.selectedQuestionIndex];
+                selectedQuestion.question  = this.form.question;
+                selectedQuestion.direction = this.form.direction;
+                selectedQuestion.image = this.form.with_image ?? (selectedQuestion.id ? selectedQuestion.image : selectedQuestion.image);
+                selectedQuestion.image_url = this.form.image_url ?? selectedQuestion.image_url;
+                selectedQuestion.question_type = this.form.question_type;
+                selectedQuestion.choices = this.form.choices ?? null;
+                selectedQuestion.answer = this.form.answer ?? null;
+                selectedQuestion.points = this.form.points
+                this.editQuestion = false;
+            }else {
+                this.questionnaires[this.activeSection].questions.push(skeleton)
+            }
+            
             this.closeQuestion();
             this.clearForm();
         }
+
     },
     addChoices() {
         if (!this.form.choice) {
             this.errors.choice = 'The choice field is required';
+            return;
         }
-        this.form.choices = this.form.choices ?? []
+        this.form.choices = this.form.choices ?? [];
         this.form.choices.push(this.form.choice);
         this.form.choice = null;
     },
@@ -420,11 +493,61 @@ export default {
         this.form.direction = this.sectionQuestions.direction;
         this.modalSection();
     },
+    openEditQuestionModal(index) {
+        this.selectedQuestionIndex = index;
+        const selectedQuestion = this.sectionQuestions.questions[index]
+        this.editQuestion = true;
+        this.form.question = selectedQuestion.question;
+        this.form.direction = selectedQuestion.direction;
+        this.form.question_type = selectedQuestion.question_type;
+        this.form.choices = selectedQuestion.choices ?? null;
+        this.form.answer = selectedQuestion.answer ?? null;
+        this.form.points = selectedQuestion.points;
+        this.modalQuestion();
+    },
+    deleteSection() {
+        if (this.questionnaires[this.activeSection].id) {
+            this.deleted.sections.push(this.questionnaires[this.activeSection].id);
+        }
+        this.questionnaires.splice(this.activeSection, 1);
+    },
+    deleteQuestion(index) {
+        if (this.sectionQuestions.questions[index].id) {
+            this.deleted.questions.push(this.sectionQuestions.questions[index].id);
+        }
+        this.sectionQuestions.questions.splice(index, 1);
+    },
     clearForm() {
         this.form = {};
+        this.editSection = false;
+        this.editQuestion = false;
+        const fileInput = this.$refs.file;
+        if (fileInput) {
+            fileInput.value = '';
+        }
     },
     clearError(field) {
         delete this.errors[field];
+    },
+    srcImage(question) {
+        if (question.id) {
+            return this.image + '/' + question?.image;
+        }else {
+            return question?.image_url;
+        }
+    },
+    showLoader() {
+        $.blockUI({
+            message: '<div class="spinner-border text-primary" role="status"></div>',
+            css: {
+                backgroundColor: 'transparent',
+                border: '0'
+            },
+            overlayCSS: {
+                backgroundColor: '#fff',
+                opacity: 0.8
+            }
+        });
     },
     hideLoader() {
       $.unblockUI();

@@ -87,35 +87,38 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a
-                                        href="{{ route('admin.activities.questions', $item->id) }}"
-                                        target="_blank"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="left"
-                                        title="Add Questions"
-                                        class="btn btn-sm btn-icon btn-relief-primary">
-                                        <i data-feather="file-plus"></i>
-                                    </a>
-                                    <button 
-                                        data-item-title="Edit <span class='text-primary'>{{ $item->title }}</span> Data"
-                                        data-item-route="{{ route('admin.activities.show', $item->id) }}"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="left"
-                                        title="Edit {{ $item->title }}"
-                                        type="button" 
-                                        class="edit btn btn-sm btn-icon btn-relief-success">
-                                        <i data-feather="edit"></i>
-                                    </button>
-                                    <button 
-                                        data-item-title="{{ $item->title }}"
-                                        data-item-route="{{ route('admin.activities.show', $item->id) }}"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="left"
-                                        title="Delete {{ $item->title }}"
-                                        type="button" 
-                                        class="delete btn btn-sm btn-icon btn-relief-danger">
-                                        <i data-feather="delete"></i>
-                                    </button>
+                                    <div class="dropstart">
+                                        <button 
+                                            class="btn btn-sm btn-icon btn-round border-0 p-50 btn-relief-primary dropdown-toggle hide-arrow" 
+                                            type="button" 
+                                            data-bs-toggle="dropdown" 
+                                            aria-haspopup="true" 
+                                            aria-expanded="false">
+                                            <i data-feather="settings"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a class="dropdown-item" target="_blank" href="{{ route('admin.activities.questions', $item->id) }}">
+                                                <i data-feather="file-text"></i> Results
+                                            </a>
+                                            <a class="dropdown-item" target="_blank" href="{{ route('admin.activities.questions', $item->id) }}">
+                                                <i data-feather="file-plus"></i> Questions
+                                            </a>
+                                            <a 
+                                                class="dropdown-item edit" href="javascript:void(;)"
+                                                data-item-title="Edit <span class='text-primary'>{{ $item->title }}</span> Data"
+                                                data-item-route="{{ route('admin.activities.show', $item->id) }}"
+                                                >
+                                                <i data-feather="edit"></i> Edit
+                                            </a>
+                                            <a 
+                                                class="dropdown-item delete" href="javascript:void(;)"
+                                                data-item-title="{{ $item->title }}"
+                                                data-item-route="{{ route('admin.activities.show', $item->id) }}"
+                                                >
+                                                <i data-feather="trash-2"></i> Delete
+                                            </a>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

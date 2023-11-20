@@ -13,19 +13,11 @@ class ActivitySection extends BaseModel
         'is_deleted'
     ];
 
-    public function setTitleAttribute($value) {
-        return $this->attribtues['title'] = strtolower($value);
-    }
-
-    public function getTitleAttribute($value) {
-        return $this->attribtues['title'] = ucwords($value);
-    }
-
     public function activity() {
         return $this->belongsTo(Activity::class);
     }
 
-    public function question() {
+    public function questions() {
         return $this->hasMany(Question::class);
     }
 }

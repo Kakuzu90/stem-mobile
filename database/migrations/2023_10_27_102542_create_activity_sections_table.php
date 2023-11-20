@@ -16,7 +16,7 @@ class CreateActivitySectionsTable extends Migration
         Schema::create('activity_sections', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('direction');
+            $table->text('direction')->nullable();
             $table->foreignId('activity_id')->constrained()->cascadeOnDelete();
             $table->integer('is_deleted')->default(0)->comment('1 deleted 0 active');
             $table->timestamps();
