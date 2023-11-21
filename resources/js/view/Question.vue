@@ -172,15 +172,10 @@
                 ref="file"
                 type="file"
                 class="form-control"
-                :class="{'is-invalid' : errors.with_image}"
-                @input="clearError('with_image')"
                 @change="handleUpload"
                 accept="image/*"
                 placeholder="Select a file" 
                 />
-            <span class="invalid-feedback" v-if="errors.with_image">
-                {{ errors.with_image }}
-            </span>
         </div>
         <div class="mb-1">
             <label class="form-label">Question</label>
@@ -438,10 +433,6 @@ export default {
 
         if (this.form.question_type !== 2 && !this.form.answer) {
             this.errors.answer = 'The answer field is required';
-        }
-
-        if (!this.editQuestion && this.form.question_type === 2 && !this.form.with_image) {
-            this.errors.with_image = 'Please chooce a file first';
         }
 
         if (!this.form.points) {
