@@ -31,7 +31,10 @@ class Question extends BaseModel
     }
     
     public function random_choices() {
-        return shuffle($this->choices);
+        $choices = json_decode($this->choices, true);
+        $collection = collect($choices);
+        $shuffled = $collection->shuffle();
+        return $choices ? $shuffled->all() : $choices;
     }
 
     public function image() {

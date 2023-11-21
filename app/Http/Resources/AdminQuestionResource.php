@@ -25,7 +25,7 @@ class AdminQuestionResource extends JsonResource
                     'direction' => $item->direction,
                     'question_type' => $item->question_type,
                     'image' => $item->with_image_path,
-                    'choices' => json_decode($item->choices, true),
+                    'choices' => $item->random_choices(),
                     'answer' => $item->answer,
                     'points' => $item->points
                 ];

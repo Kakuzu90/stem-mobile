@@ -47,7 +47,7 @@ class QuestionController extends Controller
                     'points' => $question['points'],
                     'activity_section_id' => $section->id,
                 ];
-                if ($question['direction'] != 'undefined') {
+                if ($question['direction'] != 'undefined' && $question['direction'] != 'null') {
                     $questionArray['direction'] = $question['direction'];
                 }
                 if ($question['choices'] != 'null') {

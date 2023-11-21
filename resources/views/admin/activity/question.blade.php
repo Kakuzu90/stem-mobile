@@ -18,6 +18,6 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('app-assets/js/scripts/pages/app-file-manager.min.js') }}"></script>
+    <script src="{{ asset('app-assets/js/scripts/pages/app-file-manager.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
 @endsection

@@ -93,12 +93,12 @@ $(function () {
     });
   }
 
-  if ($(fileContentBody).length > 0) {
-    var rightContentWrapper = new PerfectScrollbar(fileContentBody[0], {
-      cancelable: true,
-      wheelPropagation: false
-    });
-  }
+  // if ($(fileContentBody).length > 0) {
+  //   var rightContentWrapper = new PerfectScrollbar(fileContentBody[0], {
+  //     cancelable: true,
+  //     wheelPropagation: false
+  //   });
+  // }
 
   // Files Treeview
   if (filesTreeView.length) {

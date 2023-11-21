@@ -55,7 +55,9 @@
                         </button>
                     </div>
                 </div>
+                <perfect-scrollbar ref="body" style="height: 480px">
                 <div class="file-manager-content-body pb-2">
+                    
                     <h4 class="text-dark fw-bolder mb-0" v-if="sectionQuestions">
                         {{ sectionQuestions.title }}
                         <span class="cursor-pointer" @click="openEditSectionModal">
@@ -72,6 +74,7 @@
                         <div class="col-12"
                             v-for="(question, questionIndex) in sectionQuestions?.questions"
                             :key="questionIndex"
+                            ref="items"
                         >
                             <div class="border rounded p-1">
                                 <div class="d-flex justify-content-end align-items-center">
@@ -111,7 +114,9 @@
                             </div>
                         </div>
                     </div>
+                    
                 </div>
+                </perfect-scrollbar>
             </div>
         </div>
     </div>
@@ -298,7 +303,7 @@ import Modal from '../components/Modal';
 export default {
   props: ['api', 'image'],
   components: {
-    Modal
+    Modal,
   },
   data() {
     return {
@@ -467,6 +472,16 @@ export default {
                 this.editQuestion = false;
             }else {
                 this.questionnaires[this.activeSection].questions.push(skeleton)
+                this.$nextTick(() => {
+                    const body = this.$refs.body.$el;
+                    body.scrollTop = body.scrollHeight;
+                    const items = this.$refs.items;
+                    const lastItem = items[items.length - 1];
+                    if (lastItem) {
+                        lastItem.scrollIntoView({behavior: 'smooth'});
+                    }
+                })
+                
             }
             
             this.closeQuestion();
