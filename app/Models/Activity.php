@@ -41,7 +41,7 @@ class Activity extends BaseModel
         return $query->where('type', BaseModel::QUIZ);
     }
 
-    public function scopeAssignment($query) {
+    public function scopeAssignments($query) {
         return $query->where('type', BaseModel::ASSIGNMENT);
     }
 

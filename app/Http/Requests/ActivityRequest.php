@@ -28,7 +28,7 @@ class ActivityRequest extends FormRequest
             'classroom' => ['required', 'numeric'],
             'subjects' => ['required', 'array'],
             'timer' => ['required'],
-            'type' => ['required', 'numeric'],
+            'type' => [$this->is('teacher') || $this->is('teacher/*') ? 'nullable' : 'required', 'numeric'],
             'publish' => ['nullable', 'numeric'],
         ];
     }

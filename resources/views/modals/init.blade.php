@@ -52,12 +52,32 @@
         @include('modals.admin.activity.add')
         @include('modals.admin.activity.edit')
     @break
+
+    @case('teacher.announcements.index')
+        @include('modals.teacher.announcement.add')
+        @include('modals.teacher.announcement.edit')
+    @break
+
+    @case('teacher.modules.index')
+        @include('modals.teacher.module.add')
+        @include('modals.teacher.module.edit')
+    @break
+
+    @case('teacher.quiz.index')
+        @include('modals.teacher.quiz.add')
+        @include('modals.teacher.quiz.edit')
+    @break
+
+    @case('teacher.assignments.index')
+        @include('modals.teacher.assignment.add')
+        @include('modals.teacher.assignment.edit')
+    @break
         
     @default
 
 @endswitch
 
-@if (!in_array(request()->route()->getName(), ['admin.dashboard']))
+@if (!in_array(request()->route()->getName(), ['admin.dashboard', 'teacher.dashboard']))
     @include('modals.delete')
 @endif
 

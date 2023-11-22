@@ -17,6 +17,11 @@ use App\Http\Controllers\Auth\Teacher\AuthController as TeacherAuthController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\Student\HomeController;
 use App\Http\Controllers\Teacher\DashboardController as TeacherDashboardController;
+use App\Http\Controllers\Teacher\AnnouncementController as TeacherAnnounceMentController;
+use App\Http\Controllers\Teacher\AssignmentController;
+use App\Http\Controllers\Teacher\ModuleController as TeacherModuleController;
+use App\Http\Controllers\Teacher\QuestionController;
+use App\Http\Controllers\Teacher\QuizController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -117,7 +122,17 @@ Route::prefix('teacher')
         ->group(function() {
             Route::get('logout', [TeacherAuthController::class, 'logout'])->name('logout');
 
-            Route::get('dashboard', [TeacherDashboardController::class, 'index'])->name('dashboard');
+            Route::get('my-class', [TeacherDashboardController::class, 'index'])->name('dashboard');
+
+            Route::apiResource('announcements', TeacherAnnounceMentController::class);
+            Route::get('modules/{module}/{classroom}/subjects', [TeacherModuleController::class, 'subjects'])->name('modules.subjects');
+            Route::apiResource('modules', TeacherModuleController::class);
+            Route::get('quiz/{quiz}/questions', [QuestionController::class, 'quiz'])->name('quiz.questions');
+            Route::get('quiz/{quiz}/{classroom}/subjects', [QuizController::class, 'subjects'])->name('quiz.subjects');
+            Route::apiResource('quiz', QuizController::class);
+            Route::get('assignments/{assignment}/questions', [QuestionController::class, 'assignment'])->name('assignments.questions');
+            Route::get('assignments/{assignment}/{classroom}/subjects', [AssignmentController::class, 'subjects'])->name('assignments.subjects');
+            Route::apiResource('assignments', AssignmentController::class);
         });
 
 });

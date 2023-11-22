@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Admin\ImageController;
 use App\Http\Controllers\Api\Admin\QuestionController;
+use App\Http\Controllers\Api\Teacher\ClassroomController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,6 +32,15 @@ Route::as('api.')->group(function() {
 
       Route::get('image/{filename?}', ImageController::class)->name('image');
   });
+
+  Route::prefix('teacher')
+    ->middleware('auth:teacher')
+    ->as('teacher.')
+    ->group(function() {
+
+      Route::get('classrooms/{classroom}/subjects', [ClassroomController::class, 'subjects'])->name('classrooms.subjects');
+
+    });
 
 });
 

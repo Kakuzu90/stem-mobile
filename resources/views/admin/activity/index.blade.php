@@ -53,7 +53,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($activities as $item)
+                        @foreach ($activities as $index => $item)
                             <tr>
                                 <td>
                                     {{ $item->title }}
@@ -87,7 +87,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="dropstart">
+                                    <div class="{{ $index === 0 ? 'droptop' : 'dropend' }}">
                                         <button 
                                             class="btn btn-sm btn-icon btn-round border-0 p-50 btn-relief-primary dropdown-toggle hide-arrow" 
                                             type="button" 
@@ -135,7 +135,7 @@
 <script src="{{ asset('app-assets/vendors/js/forms/cleave/cleave.min.js') }}"></script>
 <script>
     $('#init_datatable').DataTable({
-        order:[[4, 'desc'], [5, 'desc'], [0, 'asc']],
+        order:[[4, 'desc'], [5, 'desc'], [2, 'asc'], [0, 'asc']],
         language: {
             searchPlaceholder: "Search here..."
         },

@@ -4,7 +4,7 @@
   @if (Session::get('status'))
     Welcome {{ auth()->user()->name }} to E-Learning Management System | STEM
   @else
-    My Class | STEM
+    Assignments | STEM
   @endif
 @endsection
 
