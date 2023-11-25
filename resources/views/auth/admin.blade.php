@@ -1,6 +1,5 @@
 @extends('layouts.auth')
 
-
 @section('content')
     <div class="content-body">
         <div class="auth-wrapper auth-cover">

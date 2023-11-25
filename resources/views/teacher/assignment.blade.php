@@ -2,9 +2,9 @@
 
 @section('title')
   @if (Session::get('status'))
-    Welcome {{ auth()->user()->name }} to E-Learning Management System | STEM
+    Welcome {{ auth()->user()->name }} to E-Learning Management System | E-LMS
   @else
-    Assignments | STEM
+    Assignments | E-LMS
   @endif
 @endsection
 
@@ -97,7 +97,7 @@
                                           <i data-feather="settings"></i>
                                       </button>
                                       <div class="dropdown-menu dropdown-menu-end">
-                                          <a class="dropdown-item" target="_blank" href="{{ route('teacher.assignments.questions', $item->activity_id) }}">
+                                          <a class="dropdown-item" target="_blank" href="{{ route('teacher.assignments.results', $item->activity_id) }}">
                                             <i data-feather="file-text"></i> Results
                                           </a>
                                           <a class="dropdown-item" target="_blank" href="{{ route('teacher.assignments.questions', $item->activity_id) }}">

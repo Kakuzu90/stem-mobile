@@ -28,7 +28,7 @@ class DashboardController extends Controller
         $data['subject'] = Subject::count();
         $data['announcement'] = Announcement::count();
         $data['quiz'] = Activity::quiz()->count();
-        $data['assignment'] = Activity::assignment()->count();
+        $data['assignment'] = Activity::assignments()->count();
         
         return view('admin.dashboard', compact('data'));
     }

@@ -20,7 +20,12 @@
                             :key="index"
                             @click="setActiveSection(index)"
                             class="list-group-item list-group-item-action" :class="{'active': index === activeSection}">
-                            <span class="align-middle">{{ questionnaire.title }}</span>
+                            <span class="d-flex justify-content-between align-items-center">
+                                {{ questionnaire.title }}
+                                <span class="badge rounded-pill bg-light-warning">
+                                    {{ sectionTotalPoints(index) }}
+                                </span>
+                            </span>
                         </a>
                     </div>
                 </div>
@@ -55,18 +60,22 @@
                         </button>
                     </div>
                 </div>
-                <perfect-scrollbar ref="body" style="height: 480px">
-                <div class="file-manager-content-body pb-2">
+                <perfect-scrollbar ref="body" class="file-manager-content-body pb-2">
                     
-                    <h4 class="text-dark fw-bolder mb-0" v-if="sectionQuestions">
-                        {{ sectionQuestions.title }}
-                        <span class="cursor-pointer" @click="openEditSectionModal">
-                            <vue-feather type="edit-2" size="15" />
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="text-dark fw-bolder mb-0" v-if="sectionQuestions">
+                            {{ sectionQuestions.title }}
+                            <span class="cursor-pointer" @click="openEditSectionModal">
+                                <vue-feather type="edit-2" size="15" />
+                            </span>
+                            <span class="cursor-pointer ms-25" @click="deleteSection">
+                                <vue-feather type="trash-2" size="15" />
+                            </span>
+                        </h4>
+                        <span class="badge badge-pill bg-warning">
+                            {{ totalPoints }} Points
                         </span>
-                        <span class="cursor-pointer ms-25" @click="deleteSection">
-                            <vue-feather type="trash-2" size="15" />
-                        </span>
-                    </h4>
+                    </div>
                     <p v-if="sectionQuestions">
                         <span class="text-danger fw-bold">Direction:</span> {{ sectionQuestions.direction ?? 'No direction' }}
                     </p>
@@ -115,7 +124,6 @@
                         </div>
                     </div>
                     
-                </div>
                 </perfect-scrollbar>
             </div>
         </div>
@@ -329,6 +337,14 @@ export default {
     sectionQuestions() {
         return this.questionnaires[this.activeSection];
     },
+    totalPoints() {
+        let points = 0;
+        this.sectionQuestions?.questions.forEach(item => {
+            points += item.points;
+        });
+
+        return points;
+    },
     disableIfEmpty() {
         return this.questionnaires.length === 0;
     }
@@ -469,6 +485,13 @@ export default {
                     const items = this.$refs.items;
                     const lastItem = items[items.length - 1];
                     if (lastItem) {
+                        const child = lastItem.querySelector('div')
+                        child.classList.remove('border')
+                        child.classList.add('border-top-active');
+                        setTimeout(() => {
+                            child.classList.add('border')
+                            child.classList.remove('border-top-active');
+                        }, 4000);
                         lastItem.scrollIntoView({behavior: 'smooth'});
                     }
                 })
@@ -486,7 +509,9 @@ export default {
             return;
         }
         this.form.choices = this.form.choices ?? [];
-        this.form.choices.push(this.form.choice);
+        if (!this.form.choices.includes(this.form.choice.trim())) {
+            this.form.choices.push(this.form.choice);
+        }
         this.form.choice = null;
     },
     handleUpload(event) {
@@ -516,6 +541,9 @@ export default {
             this.deleted.sections.push(this.questionnaires[this.activeSection].id);
         }
         this.questionnaires.splice(this.activeSection, 1);
+        const length = this.questionnaires.length;
+        const temp = this.activeSection;
+        this.activeSection = length === 1 ? 0 : temp - 1;
     },
     deleteQuestion(index) {
         if (this.sectionQuestions.questions[index].id) {
@@ -541,6 +569,15 @@ export default {
         }else {
             return question?.image_url;
         }
+    },
+    sectionTotalPoints(index) {
+        let points = 0;
+        const questions = this.questionnaires[index]?.questions;
+        questions.forEach(item => {
+            points += item.points;
+        });
+
+        return points;
     },
     showLoader() {
         $.blockUI({

@@ -1,0 +1,24 @@
+.border-top-active {
+  border-top: 4px solid #7367f0 !important;
+  border-left: 1px solid #ebe9f1 !important;
+  border-right: 1px solid #ebe9f1 !important;
+  border-bottom: 1px solid #ebe9f1 !important;
+}
+.searchbar-class  .input-group {
+  box-shadow: 0 2px 8px 0 rgba(34, 41, 47, 0.14);
+  border-radius: 0.3rem;
+}
+.searchbar-class .input-group-text,
+.searchbar-class .search-booking {
+  height: 48px;
+  border: none;
+  font-size: 0.95rem;
+  padding-left: 1.25rem;
+}
+.searchbar-class .input-group-text::placeholder,
+.searchbar-class .search-booking::placeholder {
+  font-size: 0.95rem;
+}
+.dropdown-filter {
+  width: 250px;
+}

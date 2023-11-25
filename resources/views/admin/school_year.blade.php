@@ -2,9 +2,9 @@
 
 @section('title')
     @if (Session::get('status'))
-        Welcome {{ auth()->user()->name }} to E-Learning Management System | STEM
+        Welcome {{ auth()->user()->name }} to E-Learning Management System | E-LMS
     @else
-        School Year | STEM
+        School Year | E-LMS
     @endif
 @endsection
 

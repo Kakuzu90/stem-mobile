@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Admin;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AdminQuestionResource;
@@ -32,7 +32,7 @@ class QuestionController extends Controller
                 'title' => $questionnaire['title'],
                 'activity_id' => $activity->id
             ];
-            if ($questionnaire['direction'] != 'null') {
+            if ($questionnaire['direction'] != 'null' && $questionnaire['direction'] != 'undefined') {
                 $sectionArray['direction'] = $questionnaire['direction'];
             }
             $section = ActivitySection::updateOrCreate(

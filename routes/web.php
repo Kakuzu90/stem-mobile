@@ -127,9 +127,11 @@ Route::prefix('teacher')
             Route::apiResource('announcements', TeacherAnnounceMentController::class);
             Route::get('modules/{module}/{classroom}/subjects', [TeacherModuleController::class, 'subjects'])->name('modules.subjects');
             Route::apiResource('modules', TeacherModuleController::class);
+            Route::get('quiz/{activity}/results', [QuestionController::class, 'results'])->name('quiz.results');
             Route::get('quiz/{quiz}/questions', [QuestionController::class, 'quiz'])->name('quiz.questions');
             Route::get('quiz/{quiz}/{classroom}/subjects', [QuizController::class, 'subjects'])->name('quiz.subjects');
             Route::apiResource('quiz', QuizController::class);
+            Route::get('assignments/{activity}/results', [QuestionController::class, 'results'])->name('assignments.results');
             Route::get('assignments/{assignment}/questions', [QuestionController::class, 'assignment'])->name('assignments.questions');
             Route::get('assignments/{assignment}/{classroom}/subjects', [AssignmentController::class, 'subjects'])->name('assignments.subjects');
             Route::apiResource('assignments', AssignmentController::class);

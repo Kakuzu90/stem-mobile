@@ -15,6 +15,7 @@ class CreateSheetsTable extends Migration
     {
         Schema::create('sheets', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('activity_id')->constrained()->cascadeOnDelete();
             $table->foreignId('student_id')->constrained()->cascadeOnDelete();
             $table->foreignId('classroom_id')->constrained()->cascadeOnDelete();
             $table->foreignId('subject_id')->constrained()->cascadeOnDelete();

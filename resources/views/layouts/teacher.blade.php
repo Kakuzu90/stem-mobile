@@ -137,16 +137,16 @@
                   </a>
                 </li>
 
-                <li class="nav-item {{ isActive('teacher.quiz.index') }}">
+                <li class="nav-item {{ isActive(['teacher.quiz.index', 'teacher.quiz.questions', 'teacher.quiz.results']) }}">
                   <a href="{{ route('teacher.quiz.index') }}" class="d-flex align-items-center">
-                      <i data-feather='file-text'></i>
+                      <i data-feather='file-plus'></i>
                       <span class="menu-title text-truncate" data-i18n="Quiz">Quiz</span>
                   </a>
                 </li>
 
-                <li class="nav-item {{ isActive('teacher.assignments.index') }}">
+                <li class="nav-item {{ isActive(['teacher.assignments.index', 'teacher.assignments.questions', 'teacher.assignments.results']) }}">
                   <a href="{{ route('teacher.assignments.index') }}" class="d-flex align-items-center">
-                      <i data-feather='file-text'></i>
+                      <i data-feather='file-minus'></i>
                       <span class="menu-title text-truncate" data-i18n="Assignments">Assignments</span>
                   </a>
                 </li>
@@ -155,10 +155,10 @@
         </div>
     </div>
 
-    <div class="app-content content {{ request()->route()->getName() === 'admin.activities.questions' ? 'file-manager-application' : null }}" id="app">
+    <div class="app-content content {{ in_array(request()->route()->getName(), ['teacher.quiz.questions', 'teacher.assignments.questions']) ? 'file-manager-application' : null }}" id="app">
         <div class="content-overlay"></div>
         <div class="header-navbar-shadow"></div>
-        <div class="{{ request()->route()->getName() === 'admin.activities.questions' ? 'content-area-wrapper' : 'content-wrapper' }} container-xxl p-0">
+        <div class="{{ in_array(request()->route()->getName(), ['teacher.quiz.questions', 'teacher.assignments.questions']) ? 'content-area-wrapper' : 'content-wrapper' }} container-xxl p-0">
             @yield('body')
         </div>
     </div>
