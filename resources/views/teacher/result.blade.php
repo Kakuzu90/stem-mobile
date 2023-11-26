@@ -35,6 +35,7 @@
 <div class="content-body">
   <result
     api="{{ route('api.teacher.result.index', $activity->id) }}"
+    result="{{ route('teacher.student.result', ['activity' => $activity->id]) }}"
   />
 </div>
 @endsection

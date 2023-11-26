@@ -22,6 +22,7 @@ use App\Http\Controllers\Teacher\AssignmentController;
 use App\Http\Controllers\Teacher\ModuleController as TeacherModuleController;
 use App\Http\Controllers\Teacher\QuestionController;
 use App\Http\Controllers\Teacher\QuizController;
+use App\Http\Controllers\Teacher\StudentController as TeacherStudentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -135,6 +136,7 @@ Route::prefix('teacher')
             Route::get('assignments/{assignment}/questions', [QuestionController::class, 'assignment'])->name('assignments.questions');
             Route::get('assignments/{assignment}/{classroom}/subjects', [AssignmentController::class, 'subjects'])->name('assignments.subjects');
             Route::apiResource('assignments', AssignmentController::class);
+            Route::get('student/result/{activity?}/{student?}/{classroom?}/{subject?}', TeacherStudentController::class)->name('student.result');
         });
 
 });

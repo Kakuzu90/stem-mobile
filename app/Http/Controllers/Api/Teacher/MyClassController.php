@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 
 class MyClassController extends Controller
 {
-    public function index() {
+    public function ex() {
         $classrooms = Auth::guard('teacher')->user()->classrooms->pluck('classroom_id');
         $subjects = TeacherSubject::whereIn('classroom_id', $classrooms)->latest()->get();
         
@@ -47,11 +47,11 @@ class MyClassController extends Controller
     }
 
     public function year() {
-        $years = SchoolYear::latest()->get();
+        $years = SchoolYear::oldest()->get();
         return SchoolYearResource::collection($years);
     }
 
-    public function subjects(SchoolYear $year) {
+    public function index(SchoolYear $year) {
         $classrooms = Auth::guard('teacher')->user()->classrooms->pluck('classroom_id');
         $subjects = TeacherSubject::withoutGlobalScopes()->whereIn('classroom_id', $classrooms)
                         ->join('classrooms', 'teacher_subjects.classroom_id', '=', 'classrooms.id')

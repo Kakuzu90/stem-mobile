@@ -5,7 +5,7 @@
         <div class="d-flex justify-content-between align-items-center">
           <div class="input-group input-group-merge">
             <input type="text" class="form-control search-booking"
-                    name="search" 
+                    name="search" v-model="search"
                     placeholder="Search Subject..." aria-label="Search Subject..." />
             <div class="input-group-append">
                 <span class="input-group-text">
@@ -13,17 +13,20 @@
                 </span>
             </div>
           </div>
-          <div class="dropdown">
+          <div class="dropdown dropdown-filter-container">
             <button
                 type="button"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true" 
+                id="dropdownFilterButton"
                 aria-expanded="false"
                 class="btn btn-icon btn-relief-primary ms-50 dropdown-toggle hide-arrow"
                 >
               <i data-feather="filter"></i>
             </button>
-            <div class="dropdown-menu dropdown-menu-end dropdown-filter">
+            <div 
+              class="dropdown-filter dropdown-menu dropdown-menu-end"
+              aria-labelledby="dropdownFilterButton"
+              data-popper-placement="bottom-start"
+              >
               <div class="p-1 pb-0">
                 <div class="mb-1">
                   <label class="form-label">School Year</label>
@@ -55,7 +58,7 @@
               </div>
               <div class="dropdown-divider"></div>
               <div class="d-flex justify-content-end align-items-center me-50">
-                <button type="button" class="btn btn-sm btn-relief-primary" @click="applyFilter">Apply Filter</button>
+                <button type="button" class="btn dropdown-close btn-sm btn-relief-primary" @click="applyFilter">Apply Filter</button>
               </div>
             </div>
           </div>
@@ -63,7 +66,7 @@
       </section>
     </div>
     <div class="row justify-content-center align-items-center mt-2">
-      <h4 class="fw-bolder text-primary">S.Y 2023 - 2024</h4>
+      <h4 class="fw-bolder text-primary">{{ selectedSY }}</h4>
       <div 
         class="col-lg-4 col-sm-6"
         v-for="item in filtered"
@@ -77,19 +80,19 @@
             <span class="badge bg-success">{{ item.students }}</span>
           </div>
           <div class="card-footer d-flex justify-content-around align-items-center">
-            <div class="position-relative d-inline-block">
-              <vue-feather type="file-text" size="20" class="text-dark" />
-              <span v-if="item.module > 0" class="badge rounded-pill bg-danger badge-up">{{ item.module }}</span>
+            <div class="badge bg-light-secondary p-50 border border-dark">
+              <span class="text-dark">Modules</span>
+              <span v-if="item.module > 0" class="badge rounded-pill bg-danger ms-25">{{ item.module }}</span>
             </div>
 
-            <div class="position-relative d-inline-block">
-              <vue-feather type="file-plus" size="20" class="text-dark" />
-              <span v-if="item.quiz > 0" class="badge rounded-pill bg-danger badge-up">{{ item.quiz }}</span>
+            <div class="badge bg-light-secondary p-50 border border-dark">
+              <span class="text-dark">Quiz</span>
+              <span v-if="item.quiz > 0" class="badge rounded-pill bg-danger ms-25">{{ item.quiz }}</span>
             </div>
 
-            <div class="position-relative d-inline-block">
-              <vue-feather type="file-minus" size="20" class="text-dark" />
-              <span v-if="item.assignment > 0" class="badge rounded-pill bg-danger badge-up">{{ item.assignment }}</span>
+            <div class="badge bg-light-secondary p-50 border border-dark">
+              <span class="text-dark">Assignments</span>
+              <span v-if="item.assignment > 0" class="badge rounded-pill bg-danger ms-25">{{ item.assignment }}</span>
             </div>
           </div>
         </div>
@@ -106,36 +109,61 @@ export default {
       my_class : [],
       school_years: [],
       search: null,
+      old_school_year: null,
       school_year: null,
       filter: {by:null,type: null},
     }
   },
-  mounted() {
+  async mounted() {
+    await this.getSchoolYear();
     this.getMyClass();
-    this.getSchoolYear();
   },
   computed: {
     filtered() {
-      return this.my_class;
-    }
+      let filtered = this.my_class;
+      if (this.search) {
+        filtered = filtered.filter(item => {
+          return item.subject.toLowerCase().includes(this.search.toLowerCase());
+        });
+      }
+      if (this.filter.by && this.filter.type) {
+        filtered = filtered.sort((a, b) => {
+          const modifier = this.filter.type === 'asc' ? 1 : -1;
+          return modifier * (a[this.filter.by] > b[this.filter.by] ? 1 : -1);
+        });
+      }
+      return filtered;
+    },
+    selectedSY() {
+      const selected = this.school_years?.find(item => item.value === this.school_year);
+      if (selected) {
+        return "S.Y. " + selected?.label;
+      }
+    },
   },
   methods: {
     getMyClass() {
-      axios.get(this.api)
-        .then(response => {
-          this.my_class = response.data.data
-        })
+      axios.get(this.api + '/' + this.school_year)
+          .then(response => {
+            this.hideLoader();
+            this.my_class = response.data.data;
+          });
     },
-    getSchoolYear() {
-      axios.get(this.api + '/school-years')
+    async getSchoolYear() {
+      await axios.get(this.api)
         .then(response => {
-          this.hideLoader();
           this.school_years = response.data.data;
+          this.school_year = this.school_years[0].value;
+          this.old_school_year = this.school_year;
         })
       
     },
     applyFilter() {
-      alert("trigger")
+      if (this.old_school_year !== this.school_year) {
+        this.showLoader();
+        this.old_school_year = this.school_year;
+        this.getMyClass();
+      }
     },
     showLoader() {
         $.blockUI({

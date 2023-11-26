@@ -64,9 +64,8 @@ Route::as('api.')->group(function() {
           ->as('my-class.')
           ->group(function() {
 
-            Route::get('', 'index')->name('index');
             Route::get('school-years', 'year')->name('year');
-            Route::get('school-years/{year}', 'subjects')->name('subjects');
+            Route::get('school-years/{year?}', 'index')->name('index');
 
       });
       

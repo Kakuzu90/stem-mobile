@@ -77,7 +77,7 @@
             v-for="student in students"
             :key="student.student_id"
             class="cursor-pointer"
-            @click="showScore"
+            @click="showScore(student.student_id)"
           >
             <td class="text-left d-flex align-items-center">
                 <div class="avatar">
@@ -128,7 +128,7 @@
 <script>
 
 export default {
-  props: ['api'],
+  props: ['api', 'result'],
   data() {
     return {
       classrooms: [],
@@ -181,8 +181,8 @@ export default {
     setSubject(id) {
       this.selectedRoom.subject = id;
     },
-    showScore() {
-      window.open('http://127.0.0.1:8000/teacher/quiz', '_blank', "width=600,height=800")
+    showScore(student) {
+      window.open(this.result + '/' + student + '/' + this.selectedRoom.classroom + '/' + this.selectedRoom.subject, '_blank', "width=600,height=800")
     },
     showLoader() {
         $.blockUI({
