@@ -25,7 +25,7 @@ class AuthController extends Controller
                     ->with('login_error', "Oops! It looks like your account has expired. 🕒 Please renew it to continue.");
             }
             logMyActivity("Login");
-            return redirect()->intended(route('teacher.dashboard'))->withStatus('logged_in');
+            return redirect()->intended(route('teacher.dashboard'))->withStatus('teacher');
         }
 
         return redirect()->back()->withInput()

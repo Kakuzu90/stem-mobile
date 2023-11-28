@@ -2,7 +2,7 @@
 
 @section('title')
   @if (Session::get('status'))
-    Welcome {{ auth()->user()->name }} to E-Learning Management System | E-LMS
+    Welcome {{ auth()->guard('teacher')->user()->fullname }} to E-Learning Management System | E-LMS
   @else
     My Class | E-LMS
   @endif

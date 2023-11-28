@@ -82,7 +82,18 @@
 
 @endswitch
 
-@if (!in_array(request()->route()->getName(), ['admin.dashboard', 'teacher.dashboard']))
+@if (!in_array(request()->route()->getName(), 
+        [
+            'admin.dashboard', 
+            'teacher.dashboard', 
+            'teacher.students.index',
+            'teacher.quiz.results',
+            'teacher.quiz.questions',
+            'teacher.assignments.results',
+            'teacher.assignments.questions',
+            'teacher.student.result',
+            'teacher.profile.index'
+        ]))
     @include('modals.delete')
 @endif
 

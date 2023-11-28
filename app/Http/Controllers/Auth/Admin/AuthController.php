@@ -19,7 +19,7 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
-            return redirect()->intended(route('admin.dashboard'))->withStatus('logged_in');
+            return redirect()->intended(route('admin.dashboard'))->withStatus('web');
         }
 
         return redirect()->back()->withInput()

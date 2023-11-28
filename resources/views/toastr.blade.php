@@ -1,7 +1,7 @@
 <script>
 
-    @if (Session::get('status'))
-        toastr['success']('You have successfully logged in to E-Learning Management System. Now you can start to explore!', '👋 Welcome back {{ auth()->user()->name }}!', {
+    @if ($guard = Session::get('status'))
+        toastr['success']('You have successfully logged in to E-Learning Management System. Now you can start to explore!', '👋 Welcome back {{ $guard === "web" ? auth()->guard($guard)->user()->name : auth()->guard($guard)->user()->fullname }}!', {
             positionClass: 'toast-bottom-right',
             closeButton: true,
             tapToDismiss: false,
