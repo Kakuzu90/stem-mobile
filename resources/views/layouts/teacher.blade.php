@@ -151,6 +151,18 @@
                   </a>
                 </li>
 
+                <li class="navigation-header mt-1">
+                    <span data-i18n="Informations">Users</span>
+                    <i data-feather="more-horizontal"></i>
+                </li>
+
+                <li class="nav-item {{ isActive('teacher.students.index') }}">
+                    <a href="{{ route('teacher.students.index') }}" class="d-flex align-items-center">
+                        <i data-feather='user'></i>
+                        <span class="menu-title text-truncate" data-i18n="Students">Students</span>
+                    </a>
+                </li>
+
             </ul>
         </div>
     </div>

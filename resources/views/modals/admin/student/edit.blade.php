@@ -117,7 +117,7 @@
                     </div>
                     <div class="col-lg-6 col-12">
                         <label class="form-label">Classroom</label>
-                        <select data-placeholder="Select a classroom..." class="select2-icons form-select" name="classroom" required>
+                        <select data-placeholder="Select a classroom..." class="select2-icons form-select" name="classroom">
                                 <option value="">Select a classroom...</option>
                             @foreach ($data['classrooms'] as $classroom)
                                 <option value="{{ $classroom->id }}" data-icon="columns">
@@ -128,7 +128,7 @@
                     </div>
                     <div class="col-lg-6 col-12">
                         <label class="form-label">Subjects</label>
-                        <select data-placeholder="Select a subject..." class="select2-icons form-select" id="subjects" name="subjects[]" multiple required></select>
+                        <select data-placeholder="Select a subject..." class="select2-icons form-select" id="subjects" name="subjects[]" multiple></select>
                     </div>
                     <div class="col-lg-6 col-12">
                         <label class="form-label">Date Valid</label>

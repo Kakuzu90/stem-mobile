@@ -36,8 +36,8 @@ class StudentRequest extends FormRequest
             'password' => [($id) ? 'nullable' : 'required', 'confirmed'],
             'address' => ['required'],
             'age' => ['required', 'numeric'],
-            'classroom' => ['required', 'numeric'],
-            'subjects' => ['required', 'array']
+            'classroom' => [($id) ? 'nullable' : 'required', 'numeric'],
+            'subjects' => [($id) ? 'nullable' : 'required', 'array']
         ];
     }
 }

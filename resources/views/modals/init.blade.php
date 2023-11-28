@@ -72,6 +72,11 @@
         @include('modals.teacher.assignment.add')
         @include('modals.teacher.assignment.edit')
     @break
+
+    @case('teacher.students.index')
+        @include('modals.teacher.student.add')
+        @include('modals.teacher.student.edit')
+    @break
         
     @default
 

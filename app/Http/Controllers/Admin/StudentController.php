@@ -109,14 +109,15 @@ class StudentController extends Controller
         }
 
         $student->update($update);
-        StudentSubject::where('student_id', $student->id)->where('classroom_id', $request->classroom)->delete();
-
-        foreach($request->subjects as $subject) {
-            StudentSubject::create([
-                'student_id' => $student->id,
-                'classroom_id' => $request->classroom,
-                'subject_id' => $subject,
-            ]);
+        if ($request->filled('classroom') && $request->filled('subjects')) {
+            StudentSubject::where('student_id', $student->id)->where('classroom_id', $request->classroom)->delete();
+            foreach($request->subjects as $subject) {
+                StudentSubject::create([
+                    'student_id' => $student->id,
+                    'classroom_id' => $request->classroom,
+                    'subject_id' => $subject,
+                ]);
+            }
         }
 
         return $student->wasChanged()

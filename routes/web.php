@@ -20,6 +20,7 @@ use App\Http\Controllers\Teacher\DashboardController as TeacherDashboardControll
 use App\Http\Controllers\Teacher\AnnouncementController as TeacherAnnounceMentController;
 use App\Http\Controllers\Teacher\AssignmentController;
 use App\Http\Controllers\Teacher\ModuleController as TeacherModuleController;
+use App\Http\Controllers\Teacher\ProfileController;
 use App\Http\Controllers\Teacher\QuestionController;
 use App\Http\Controllers\Teacher\QuizController;
 use App\Http\Controllers\Teacher\StudentController as TeacherStudentController;
@@ -136,7 +137,16 @@ Route::prefix('teacher')
             Route::get('assignments/{assignment}/questions', [QuestionController::class, 'assignment'])->name('assignments.questions');
             Route::get('assignments/{assignment}/{classroom}/subjects', [AssignmentController::class, 'subjects'])->name('assignments.subjects');
             Route::apiResource('assignments', AssignmentController::class);
-            Route::get('student/result/{activity?}/{student?}/{classroom?}/{subject?}', TeacherStudentController::class)->name('student.result');
+            Route::get('student/result/{activity?}/{student?}/{classroom?}/{subject?}', [TeacherStudentController::class, 'result'])->name('student.result');
+            Route::get('students/search', [TeacherStudentController::class, 'search'])->name('students.search');
+            Route::get('students/{student}/{classroom}', [TeacherStudentController::class, 'subjects'])->name('students.subjects');
+            Route::apiResource('students', TeacherStudentController::class)->except('destroy');
+            Route::prefix('profile')->as('profile.')
+                    ->controller(ProfileController::class)->group(function() {
+                Route::get('', 'index')->name('index');
+                Route::put('general', 'general')->name('general');
+                Route::patch('password', 'password')->name('password');
+            });
         });
 
 });
