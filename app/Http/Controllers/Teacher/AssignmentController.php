@@ -54,6 +54,8 @@ class AssignmentController extends Controller
             ]);
         }
 
+        logMyActivity("Added a new assignment");
+
         return redirect()->back()->with('success', ["New Assignment Added", ucwords($request->title) . " has been successfully added."]);
     }
 
@@ -106,6 +108,8 @@ class AssignmentController extends Controller
             ]);
         }
 
+        !$assignment->wasChanged() ?: logMyActivity("Updated an assignment");
+
         return $assignment->wasChanged()
             ? redirect()->back()->with('update', ["Assignment Updated", $assignment->title. " has been successfully changed."])
             : redirect()->back();
@@ -124,6 +128,7 @@ class AssignmentController extends Controller
             404
         );
         $assignment->update(['is_deleted' => 1]);
+        logMyActivity("Delete an assignment");
 
         return redirect()->back()->with('destroy', ["Assignment Deleted", $assignment->title . " has been successfully deleted."]);
     }

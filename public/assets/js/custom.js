@@ -13,14 +13,14 @@ close.on('click', function() {
 });
 
 $(document).on('click', function(event) {
-  const isDropDown = event.target.matches('.dropdown-toggle') || event.target.closest('.dropdown-filter');
+  const isDropDown = event.target.matches('.dropdown-filter-toggle') || event.target.closest('.dropdown-filter');
   if (!isDropDown) {
     dropDown.classList.remove('show');
     container.classList.remove('show');
   }
 });
 
-$(document).on('click', '.dropdown-toggle',function() {
+$(document).on('click', '.dropdown-filter-toggle',function() {
   dropDown.classList.toggle('show');
   container.classList.toggle('show');
 });

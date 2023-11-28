@@ -48,6 +48,8 @@ class AnnouncementController extends Controller
             ]);
         }
 
+        logMyActivity("Added a new announcement");
+
         return redirect()->back()->with('success', ["New Announcement Added", ucwords($request->title) . " has been successfully added."]);
     }
 
@@ -100,6 +102,8 @@ class AnnouncementController extends Controller
             ]);
         }
 
+        !$announcement->wasChanged() ?: logMyActivity("Updated an announcement");
+
         return $announcement->wasChanged() 
             ? redirect()->back()->with('update', ["Announcement Updated", $announcement->title . " has been successfully changed."])
             : redirect()->back();
@@ -118,6 +122,7 @@ class AnnouncementController extends Controller
             404
         );
         $announcement->update(['is_deleted' => 1]);
+        logMyActivity("Delete an announcement");
 
         return redirect()->back()->with('destroy', ["Announcement Deleted", $announcement->title . " has been successfully deleted."]);
     }

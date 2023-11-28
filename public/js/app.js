@@ -16507,7 +16507,7 @@ var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
   type: "button",
   id: "dropdownFilterButton",
   "aria-expanded": "false",
-  "class": "btn btn-icon btn-relief-primary ms-50 dropdown-toggle hide-arrow"
+  "class": "btn btn-icon btn-relief-primary ms-50 dropdown-filter-toggle hide-arrow"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
   "data-feather": "filter"
 })], -1 /* HOISTED */);

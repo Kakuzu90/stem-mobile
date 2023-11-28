@@ -18,7 +18,7 @@
                 type="button"
                 id="dropdownFilterButton"
                 aria-expanded="false"
-                class="btn btn-icon btn-relief-primary ms-50 dropdown-toggle hide-arrow"
+                class="btn btn-icon btn-relief-primary ms-50 dropdown-filter-toggle hide-arrow"
                 >
               <i data-feather="filter"></i>
             </button>

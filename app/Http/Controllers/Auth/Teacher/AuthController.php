@@ -24,6 +24,7 @@ class AuthController extends Controller
                 return redirect()->back()->withInput()
                     ->with('login_error', "Oops! It looks like your account has expired. 🕒 Please renew it to continue.");
             }
+            logMyActivity("Login");
             return redirect()->intended(route('teacher.dashboard'))->withStatus('logged_in');
         }
 
@@ -31,9 +32,11 @@ class AuthController extends Controller
                 ->with('login_error', "These credentials do not match our records.");
     }
 
-    public function logout() {
+    public function logout(Request $request) {
+        logMyActivity("Logout");
         Auth::guard('teacher')->logout();
-
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect()->route('teacher.login');
     }
 }

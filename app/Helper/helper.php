@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Auth;
 
 if (!function_exists('isActive')) {
@@ -14,14 +15,30 @@ if (!function_exists('isActive')) {
 
 if (!function_exists('verifyMe')) {
     function verifyMe(string $password) : bool {
-        if (Auth::getDefaultDrive() === 'web') {
+        if (Auth::getDefaultDriver() === 'web') {
             return password_verify($password, Auth::user()->password);
         }
-        if (Auth::getDefaultDrive() === 'teacher') {
+        if (Auth::getDefaultDriver() === 'teacher') {
             return password_verify($password, Auth::guard('teacher')->user()->password);
         }
-        if (Auth::getDefaultDrive() === 'student') {
+        if (Auth::getDefaultDriver() === 'student') {
             return password_verify($password, Auth::guard('student')->user()->password);
         }
+    }
+}
+
+if (!function_exists('logMyActivity')) {
+    function logMyActivity(string $action, string $guard = 'teacher') : void {
+        $log = [];
+
+        if ($guard === 'teacher') {
+            $log['teacher_id'] = Auth::guard($guard)->id();
+        }
+        if ($guard === 'student') {
+            $log['student_id'] = Auth::guard($guard)->id();
+        }
+        $log['action'] = $action;
+
+        ActivityLog::create($log);
     }
 }

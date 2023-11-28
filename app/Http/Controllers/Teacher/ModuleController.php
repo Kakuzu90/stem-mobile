@@ -54,6 +54,8 @@ class ModuleController extends Controller
                 ]);
             }
 
+            logMyActivity("Added a new module");
+
             return redirect()->back()->with('success', ["New Module Added", ucwords($request->title) . " has been successfully added."]);
         }
     }
@@ -112,6 +114,8 @@ class ModuleController extends Controller
             ]);
         }
 
+        !$module->wasChanged() ?: logMyActivity("Updated a module") ;
+
         return $module->wasChanged()
             ? redirect()->back()->with('update', ["Module Updated", $module->title . " has been successfully changed."])
             : redirect()->back();
@@ -130,6 +134,7 @@ class ModuleController extends Controller
             404
         );
         $module->update(['is_deleted' => 1]);
+        logMyActivity("Delete a module");
 
         return redirect()->back()->with('destroy', ["Module Deleted", $module->title . " has been successfully deleted."]);
     }

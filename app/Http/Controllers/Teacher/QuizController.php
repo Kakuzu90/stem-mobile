@@ -54,6 +54,8 @@ class QuizController extends Controller
             ]);
         }
 
+        logMyActivity("Added a quiz");
+
         return redirect()->back()->with('success', ["New Quiz Added", ucwords($request->title) . " has been successfully added."]);
     }
 
@@ -106,6 +108,8 @@ class QuizController extends Controller
             ]);
         }
 
+        !$quiz->wasChanged() ?: logMyActivity("Updated a quiz");
+
         return $quiz->wasChanged()
             ? redirect()->back()->with('update', ["Quiz Updated", $quiz->title. " has been successfully changed."])
             : redirect()->back();
@@ -124,6 +128,7 @@ class QuizController extends Controller
             404
         );
         $quiz->update(['is_deleted' => 1]);
+        logMyActivity("Delete a quiz");
 
         return redirect()->back()->with('destroy', ["Quiz Deleted", $quiz->title . " has been successfully deleted."]);
     }
