@@ -28,6 +28,8 @@ class AnnouncementRequest extends FormRequest
             'context' => ['required'],
             'classrooms' => ['required', 'array'],
             'publish' => ['nullable', 'numeric'],
+            'date_open' => ['required', 'date', 'date_format:Y-m-d'],
+            'date_closed' => ['required', 'date', 'date_format:Y-m-d'],
         ];
     }
 }

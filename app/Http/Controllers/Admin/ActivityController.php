@@ -32,10 +32,17 @@ class ActivityController extends Controller
      */
     public function store(ActivityRequest $request)
     {
+        // if (Activity::checkDateConflict($request->date_open, $request->date_closed)) {
+        //     return redirect()->back()
+        //         ->with('error', ['Date Conflict', 'Sorry, there is a conflict with the selected dates. Please choose different date ranges']);
+        // }
+
         $activity = Activity::create([
             'title' => $request->title,
             'timer' => $request->timer,
             'type' => $request->type,
+            'date_open' => $request->date_open,
+            'date_closed' => $request->date_closed,
             'is_published' => $request->publish ?? BaseModel::NO_PUBLISHED
         ]);
 
@@ -76,6 +83,10 @@ class ActivityController extends Controller
      */
     public function update(ActivityRequest $request, Activity $activity)
     {
+        // if (Activity::where('id', '!=', $activity->id)->checkDateConflict($request->date_open, $request->date_closed)) {
+        //     return redirect()->back()
+        //         ->with('error', ['Date Conflict', 'Sorry, there is a conflict with the selected dates. Please choose different date ranges']);
+        // }
         $activity->update([
             'title' => $request->title,
             'timer' => $request->timer,

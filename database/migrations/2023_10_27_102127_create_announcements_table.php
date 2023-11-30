@@ -18,6 +18,8 @@ class CreateAnnouncementsTable extends Migration
             $table->string('title');
             $table->text('context');
             $table->integer('is_published');
+            $table->date('date_open');
+            $table->date('date_closed');
             $table->integer('is_deleted')->default(0)->comment('1 deleted 0 active');
             $table->timestamps();
         });

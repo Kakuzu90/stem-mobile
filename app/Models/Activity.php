@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Activity extends BaseModel
@@ -9,12 +10,16 @@ class Activity extends BaseModel
     use HasFactory;
 
     protected $fillable = [
-        'title', 
+        'title', 'date_open', 'date_closed',
         'timer', 'type', 'is_published', 'is_deleted'
     ];
 
     protected $hidden = [
-        'created_at', 'updated_at'
+        'created_at', 'updated_at', 'is_published'
+    ];
+
+    protected $dates = [
+        'date_open', 'date_closed'
     ];
 
     public function setTitleAttribute($value) {
@@ -43,6 +48,22 @@ class Activity extends BaseModel
 
     public function scopeAssignments($query) {
         return $query->where('type', BaseModel::ASSIGNMENT);
+    }
+
+    public function scopeOpen($query) {
+        $today = Carbon::now();
+        return $query->where('date_open', '>=', $today)->where('date_closed', '<=', $today);
+    }
+
+    public function scopeCheckDateConflict($query, $date_open, $date_closed) {
+        return $query->where(function ($query) use ($date_open, $date_closed) {
+            $query->whereBetween('date_open', [$date_open, $date_closed])
+                ->orWhereBetween('date_closed', [$date_open, $date_closed])
+                ->orWhere(function ($query) use ($date_open, $date_closed) {
+                    $query->where('date_open', '>=', $date_open)
+                        ->where('date_closed', '<=', $date_closed);
+                });
+        })->exists();
     }
 
     public function type() {

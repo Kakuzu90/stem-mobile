@@ -31,10 +31,17 @@ class AnnouncementController extends Controller
      */
     public function store(AnnouncementRequest $request)
     {
+        if (Announcement::checkDateConflict($request->date_open, $request->date_closed)) {
+            return redirect()->back()
+                ->with('error', ['Date Conflict', 'Sorry, there is a conflict with the selected dates. Please choose different date ranges']);
+        }
+
         $announcement = Announcement::create([
             'title' => $request->title,
             'context' => $request->context,
             'classroom_id' => $request->classroom,
+            'date_open' => $request->date_open,
+            'date_closed' => $request->date_closed,
             'is_published' => $request->publish ?? BaseModel::NO_PUBLISHED,
         ]);
 
@@ -75,6 +82,10 @@ class AnnouncementController extends Controller
      */
     public function update(AnnouncementRequest $request, Announcement $announcement)
     {
+        if (Announcement::where('id', '!=', $announcement->id)->checkDateConflict($request->date_open, $request->date_closed)) {
+            return redirect()->back()
+                ->with('error', ['Date Conflict', 'Sorry, there is a conflict with the selected dates. Please choose different date ranges']);
+        }
         $announcement->update([
             'title' => $request->title,
             'context' => $request->context,

@@ -30,6 +30,8 @@ class ActivityRequest extends FormRequest
             'timer' => ['required'],
             'type' => [$this->is('teacher') || $this->is('teacher/*') ? 'nullable' : 'required', 'numeric'],
             'publish' => ['nullable', 'numeric'],
+            'date_open' => ['required', 'date', 'date_format:Y-m-d'],
+            'date_closed' => ['required', 'date', 'date_format:Y-m-d'],
         ];
     }
 }
