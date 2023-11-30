@@ -3,12 +3,20 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\BaseModel;
+use App\Models\ClassroomAnnouncement;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     public function __invoke()
     {
-        return view('student.home');
+        $classrooms = Auth::guard('student')->user()->classrooms?->pluck('classroom_id');
+        $announcement = ClassroomAnnouncement::whereIn('classroom_id', $classrooms)
+                                ->join('announcements', 'classroom_announcements.announcement_id', '=', 'announcements.id')
+                                ->where('announcements.is_deleted', 0)
+                                ->where('announcements.is_published', BaseModel::PUBLISHED)
+                                ->select('announcement_id')->distinct()->first();
+        return view('student.home', compact('announcement'));
     }
 }

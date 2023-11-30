@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\ResultController;
+use App\Http\Controllers\Api\Student\MyClassController as StudentMyClassController;
 use App\Http\Controllers\Api\Teacher\ClassroomController;
 use App\Http\Controllers\Api\Teacher\MyClassController;
 use Illuminate\Support\Facades\Route;
@@ -69,6 +70,21 @@ Route::as('api.')->group(function() {
 
       });
       
+    });
+
+    Route::prefix('student')
+      ->middleware('auth:student')
+      ->as('student.')
+      ->group(function() {
+
+        Route::controller(StudentMyClassController::class)
+          ->prefix('my-class')
+          ->as('my-class.')
+          ->group(function() {
+            Route::get('school-years', 'year')->name('year');
+            Route::get('school-years/{year?}', 'index')->name('index');
+        });
+
     });
 
 });

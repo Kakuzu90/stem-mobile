@@ -42,7 +42,7 @@ Route::middleware('guest:student')
     ->as('student.')
     ->group(function() {
     Route::get('/', 'index')->name('login');
-    Route::get('stored', 'login')->name('login.store');
+    Route::post('stored', 'login')->name('login.store');
 });
 
 Route::middleware('auth:student')
@@ -54,7 +54,6 @@ Route::middleware('auth:student')
         });
 
         Route::get('logout', [StudentAuthController::class, 'logout'])->name('logout');
-
         Route::get('home', HomeController::class)->name('home');
 });
 

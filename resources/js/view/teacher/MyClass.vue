@@ -18,14 +18,14 @@
                 type="button"
                 id="dropdownFilterButton"
                 aria-expanded="false"
-                class="btn btn-icon btn-relief-primary ms-50 dropdown-filter-toggle hide-arrow"
+                class="btn btn-icon btn-relief-primary ms-50 d-block dropdown-filter-toggle hide-arrow"
                 >
               <i data-feather="filter"></i>
             </button>
             <div 
               class="dropdown-filter dropdown-menu dropdown-menu-end"
               aria-labelledby="dropdownFilterButton"
-              data-popper-placement="bottom-start"
+              data-bs-popper="none"
               >
               <div class="p-1 pb-0">
                 <div class="mb-1">

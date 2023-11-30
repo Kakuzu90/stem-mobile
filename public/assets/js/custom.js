@@ -13,7 +13,7 @@ close.on('click', function() {
 });
 
 $(document).on('click', function(event) {
-  const isDropDown = event.target.matches('.dropdown-filter-toggle') || event.target.closest('.dropdown-filter');
+  const isDropDown = event.target.matches('.dropdown-filter-toggle') || event.target.closest('.dropdown-filter') || event.target.matches('.dropdown-filter-container');
   if (!isDropDown) {
     dropDown.classList.remove('show');
     container.classList.remove('show');
