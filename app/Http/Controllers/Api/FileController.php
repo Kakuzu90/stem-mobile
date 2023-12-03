@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 
-class ImageController extends Controller
+class FileController extends Controller
 {
-    public function __invoke(?string $filename) 
+    public function index(?string $filename) 
     {
         if ($filename) {
             $path = storage_path("app/public/questions/" . $filename);
@@ -23,5 +23,20 @@ class ImageController extends Controller
 
             return $response;
         }
+    }
+
+    public function module(string $path) 
+    {
+        $path = storage_path("app/public/modules/" . $path);
+
+        abort_if(!File::exists($path), 404);
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = Response::make($file, 200);
+        $response->header('Content-Type', $type);
+
+        return $response;
     }
 }

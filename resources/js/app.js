@@ -8,6 +8,7 @@ import Question from './view/Question'
 import Result  from './view/Result'
 import MyClass from './view/teacher/MyClass'
 import StudentClass from './view/student/StudentClass'
+import Classroom from './view/student/Classroom'
 
 import 'vue-select/dist/vue-select.css';
 import 'vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.min.css'
@@ -20,6 +21,7 @@ app.component('question', Question);
 app.component('result', Result);
 app.component('my-class', MyClass);
 app.component('student-class', StudentClass);
+app.component('classroom', Classroom);
 
 app.use(PerfectScrollbar, {
   options: {

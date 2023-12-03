@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 
 class Activity extends BaseModel
 {
@@ -18,8 +19,9 @@ class Activity extends BaseModel
         'created_at', 'updated_at', 'is_published'
     ];
 
-    protected $dates = [
-        'date_open', 'date_closed'
+    protected $casts = [
+        'date_open' => 'date',
+        'date_closed' => 'date',
     ];
 
     public function setTitleAttribute($value) {
@@ -40,6 +42,10 @@ class Activity extends BaseModel
 
     public function activity_sections() {
         return $this->hasMany(ActivitySection::class);
+    }
+
+    public function sheets() {
+        return $this->hasMany(Sheet::class);
     }
 
     public function scopeQuiz($query) {
@@ -64,6 +70,10 @@ class Activity extends BaseModel
                         ->where('date_closed', '<=', $date_closed);
                 });
         })->exists();
+    }
+
+    public function student_sheet() {
+        return $this->sheets->where('student_id', Auth::guard('student')->id())->first();
     }
 
     public function type() {

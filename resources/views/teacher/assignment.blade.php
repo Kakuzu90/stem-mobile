@@ -104,14 +104,14 @@
                                             <i data-feather="file-plus"></i> Questions
                                           </a>
                                           <a 
-                                              class="dropdown-item edit" href="javascript:void(;)"
+                                              class="dropdown-item edit"
                                               data-item-title="Edit <span class='text-primary'>{{ $item->activity->title }}</span> Data"
                                               data-item-route="{{ route('teacher.quiz.show', $item->activity_id) }}"
                                               >
                                               <i data-feather="edit"></i> Edit
                                           </a>
                                           <a 
-                                              class="dropdown-item delete" href="javascript:void(;)"
+                                              class="dropdown-item delete"
                                               data-item-title="{{ $item->title }}"
                                               data-item-route="{{ route('teacher.quiz.show', $item->activity_id) }}"
                                               >

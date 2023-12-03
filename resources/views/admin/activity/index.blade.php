@@ -116,14 +116,14 @@
                                                 <i data-feather="file-plus"></i> Questions
                                             </a>
                                             <a 
-                                                class="dropdown-item edit" href="javascript:void(;)"
+                                                class="dropdown-item edit"
                                                 data-item-title="Edit <span class='text-primary'>{{ $item->title }}</span> Data"
                                                 data-item-route="{{ route('admin.activities.show', $item->id) }}"
                                                 >
                                                 <i data-feather="edit"></i> Edit
                                             </a>
                                             <a 
-                                                class="dropdown-item delete" href="javascript:void(;)"
+                                                class="dropdown-item delete"
                                                 data-item-title="{{ $item->title }}"
                                                 data-item-route="{{ route('admin.activities.show', $item->id) }}"
                                                 >
@@ -249,6 +249,7 @@
                     altFormat: 'F j, Y',
                     dateFormat: 'Y-m-d'
                 });
+
                 if (response.publish == 1) {
                     $('#edit input[name=publish]').prop('checked', true)
                 }else {
