@@ -70,6 +70,8 @@ class ActivityController extends Controller
             'timer' => $activity->timer,
             'type' => $activity->type,
             'publish' => $activity->is_published,
+            'date_open' => $activity->date_open,
+            'date_closed' => $activity->date_closed,
             'classroom' => $activity->classrooms?->first()?->classroom_id,
         ];
     }
@@ -91,6 +93,8 @@ class ActivityController extends Controller
             'title' => $request->title,
             'timer' => $request->timer,
             'type' => $request->type,
+            'date_open' => $request->date_open,
+            'date_closed' => $request->date_closed,
             'is_published' => $request->publish ?? BaseModel::NO_PUBLISHED,
         ]);
 

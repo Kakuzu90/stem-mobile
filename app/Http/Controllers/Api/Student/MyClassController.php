@@ -35,6 +35,8 @@ class MyClassController extends Controller
                                     ->count();
             $module = ClassroomModule::where('classroom_id', $item->classroom_id)->where('subject_id', $item->subject_id)->count();
             return [
+                'classroom_id' => $item->classroom_id,
+                'subject_id' => $item->subject_id,
                 'teacher_name' => $item->classroom->teacher->fullname,
                 'teacher_profile' => $item->classroom->teacher->profile,
                 'year' => $item->classroom->school_year->name,

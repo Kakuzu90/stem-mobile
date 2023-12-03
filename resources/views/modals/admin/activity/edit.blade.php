@@ -60,6 +60,28 @@
                 <label class="form-label">Subjects</label>
                 <select data-placeholder="Select a subject..." class="select2-icons form-select subjects" name="subjects[]" multiple required></select>
             </div>
+            <div class="mb-1">
+                <label class="form-label">Date Open</label>
+                <input 
+                    type="text" 
+                    class="form-control flatpickr-human-friendly" 
+                    name="date_open"
+                    data-date-format="YYYY-MM-DD"
+                    placeholder="Select a date here" 
+                    readonly
+                    required />
+            </div>
+            <div class="mb-1">
+                <label class="form-label">Date Closed</label>
+                <input 
+                    type="text" 
+                    class="form-control flatpickr-human-friendly" 
+                    name="date_closed"
+                    data-date-format="YYYY-MM-DD"
+                    placeholder="Select a date here" 
+                    readonly
+                    required />
+            </div>
             <div class="d-flex flex-column">
                 <label class="form-check-label mb-50" for="publish1">Publish</label>
                 <div class="form-check form-switch form-check-success">

@@ -15,6 +15,8 @@ class MyClassResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'classroom_id' => $this->resource['classroom_id'],
+            'subject_id' => $this->resource['subject_id'],
             'teacher_profile' => $this->resource['teacher_profile'],
             'teacher_name' => $this->resource['teacher_name'],
             'subject' => $this->resource['subject'],

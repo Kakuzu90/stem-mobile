@@ -58,7 +58,7 @@
                                 </td>
                                 <td>
                                     @foreach ($item->classrooms as $classroom)
-                                        <span class="badge badge-pill bg-light-primary">
+                                        <span class="text-dark font-small-2 d-block border border-dark p-25 m-25 rounded">
                                             {{ $classroom->classroom->title() }}
                                         </span>
                                     @endforeach

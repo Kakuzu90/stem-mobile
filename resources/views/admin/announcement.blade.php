@@ -8,6 +8,11 @@
     @endif
 @endsection
 
+@section('plugin')
+    <link rel="stylesheet" href="{{ asset('app-assets/vendors/css/pickers/flatpickr/flatpickr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('app-assets/css/plugins/forms/pickers/form-flat-pickr.css') }}">
+@endsection
+
 @section('body')
 <div class="content-header row">
     <div class="content-header-left col-md-9 col-12 mb-2">
@@ -46,6 +51,8 @@
                             <th>Title</th>
                             <th>Context</th>
                             <th>Classrooms</th>
+                            <th>Date Open</th>
+                            <th>Date Closed</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -59,11 +66,16 @@
                                 <td>{{ $item->context }}</td>
                                 <td>
                                     @foreach ($item->classrooms as $classroom)
-                                        <span class="badge badge-pill bg-light-primary">
-                                            <i data-feather="columns"></i>
+                                        <span class="text-dark font-small-2 d-block border border-dark p-25 m-25 rounded">
                                             {{ $classroom->classroom->title() }}
                                         </span>
                                     @endforeach
+                                </td>
+                                <td>
+                                    <span class="text-primary font-small-3">{{ $item->date_open->format('F d, Y') }}</span>
+                                </td>
+                                <td>
+                                    <span class="text-primary font-small-3">{{ $item->date_closed->format('F d, Y') }}</span>
                                 </td>
                                 <td>
                                     <span class="badge badge-pill bg-{{ $item->status_color() }}">
@@ -104,9 +116,10 @@
 
 @section('scripts')
     <script src="{{ asset('app-assets/js/scripts/forms/form-select2.js') }}"></script>
+    <script src="{{ asset('app-assets/vendors/js/pickers/flatpickr/flatpickr.min.js') }}"></script>
     <script>
         $('#init_datatable').DataTable({
-            order:[[3, 'desc'], [0, 'asc']],
+            order:[[3, 'desc'], [4, 'desc'], [5, 'desc']],
             language: {
                 searchPlaceholder: "Search here..."
             },
@@ -121,6 +134,12 @@
         $('#init_datatable_wrapper div.row:last-child').addClass('px-2');
         $('select[name=init_datatable_length]').select2({
             minimumResultsForSearch: Infinity,
+        });
+
+        $('.flatpickr-human-friendly').flatpickr({
+            altInput: true,
+            altFormat: 'F j, Y',
+            dateFormat: 'Y-m-d'
         });
 
         $(document).on('change', 'input[name=publish]', function() {
@@ -156,6 +175,14 @@
                     
                     $('#edit input[name=title]').val(response.title)
                     $('#edit textarea[name=context]').val(response.context)
+                    $('#edit input[name=date_open]').val(response.date_open)
+                    $('#edit input[name=date_closed]').val(response.date_closed)
+
+                    $('.flatpickr-human-friendly').flatpickr({
+                        altInput: true,
+                        altFormat: 'F j, Y',
+                        dateFormat: 'Y-m-d'
+                    });
                     if (response.publish == 1) {
                         $('#edit input[name=publish]').prop('checked', true)
                     }else {

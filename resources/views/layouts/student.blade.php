@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="loading" lang="en" data-textdirection="ltr">
+<html class="loading semi-dark-layout" lang="en" data-layout="semi-dark-layout" data-textdirection="ltr">
 <head>
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta charset="UTF-8">
@@ -36,7 +36,7 @@
         <div class="bookmark-wrapper d-flex align-items-center">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                  <a class="nav-link menu-toggle d-flex align-items-center" href="{{ route('student.home') }}">
+                  <a class="nav-link d-flex align-items-center" href="{{ route('student.home') }}">
                     <img src="{{ asset('images/favicon.png') }}" height="35" width="35" alt="Stemobile" />
                     <span class="ms-25 font-medium-3 fw-bolder text-dark"><span class="text-danger">E</span>-LMS</span>
                   </a>
@@ -50,10 +50,14 @@
               </a>
             </li>
             <li class="nav-item dropdown dropdown-user">
-              <a class="nav-link dropdown-toggle dropdown-user-link" id="dropdown-user" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <div class="user-nav d-sm-flex d-none">
+              <a class="nav-link dropdown-toggle dropdown-user-link" 
+              id="dropdown-user" href="#" 
+              data-bs-toggle="dropdown" 
+              aria-haspopup="true" 
+              aria-expanded="false">
+                <div class="user-nav">
                   <span class="user-name fw-bolder">{{ auth()->guard('student')->user()->fullname }}</span>
-                  <span class="user-status fw-bold text-danger">Student</span>
+                  <span class="user-status fw-bold text-primary">Student</span>
                 </div>
                 <span class="avatar">
                   <img class="round" src="{{ auth()->guard('student')->user()->profile }}" alt="avatar" height="40" width="40"/>

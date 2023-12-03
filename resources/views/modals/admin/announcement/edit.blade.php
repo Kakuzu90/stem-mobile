@@ -38,6 +38,28 @@
                         @endforeach
                     </select>
                 </div>
+                <div class="mb-1">
+                    <label class="form-label">Date Open</label>
+                    <input 
+                        type="text" 
+                        class="form-control flatpickr-human-friendly" 
+                        name="date_open"
+                        data-date-format="YYYY-MM-DD"
+                        placeholder="Select a date here" 
+                        readonly
+                        required />
+                </div>
+                <div class="mb-1">
+                    <label class="form-label">Date Closed</label>
+                    <input 
+                        type="text" 
+                        class="form-control flatpickr-human-friendly" 
+                        name="date_closed"
+                        data-date-format="YYYY-MM-DD"
+                        placeholder="Select a date here" 
+                        readonly
+                        required />
+                </div>
                 <div class="d-flex flex-column">
                     <label class="form-check-label mb-50" for="publish1">Publish</label>
                     <div class="form-check form-switch form-check-success">
@@ -50,9 +72,9 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-relief-primary">
+                <button type="submit" class="btn btn-relief-success">
                     <i data-feather="database"></i>
-                    Submit
+                    Submit Changes
                 </button>
             </div>
         </div>

@@ -68,16 +68,21 @@
   <div class="row justify-content-center align-items-center mt-2">
     <h4 class="fw-bolder text-primary">{{ selectedSY }}</h4>
     <div 
-      class="col-lg-4 col-sm-6"
+      class="col-lg-3 col-md-6 col-sm-6"
       v-for="item in filtered"
       :key="item.year"
       >
-      <div class="card">
+      <div class="card cursor-pointer" @click="openClassroom(item.classroom_id, item.subject_id)">
         <img class="card-img-top" :src="image" height="150" alt="Card image cap" />
         <div class="card-body text-center">
-          <h3 class="fw-bolder text-primary">{{ item.subject }}</h3>
+          <h3 class="fw-bolder text-primary mb-0">{{ item.subject }}</h3>
           <h4>{{ item.section }}</h4>
-          <span class="badge bg-success">{{ item.students }}</span>
+          <div class="d-flex jusitfy-content-center align-items-center flex-column">
+            <div class="avatar avatar-lg">
+                <img :src="item.teacher_profile" alt="avatar" />
+            </div>
+            <h6 class="text-primary fw-bolder mb-0">{{ item.teacher_name }}</h6>
+          </div>
         </div>
         <div class="card-footer d-flex justify-content-around align-items-center">
           <div class="badge bg-light-secondary p-50 border border-dark">
@@ -155,6 +160,9 @@ export default {
           this.school_year = this.school_years[0].value;
           this.old_school_year = this.school_year;
         })
+    },
+    openClassroom(classroom, subject) {
+      window.location.assign('/student/classroom/' + classroom + '/subject/' + subject);
     },
     showLoader() {
         $.blockUI({
