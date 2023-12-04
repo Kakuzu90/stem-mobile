@@ -21,9 +21,9 @@ class ActivityResource extends JsonResource
             'date_open' => $this->activity->date_open->format('F d, Y'),
             'date_closed' => $this->activity->date_closed->format('F d, Y'),
             'date_submitted' => $this->activity->student_sheet()?->created_at->format('F d, Y'),
-            'remarks' => $this->activity->student_sheet() ? 'Submitted' : 'Not Yet',
-            'border' => $this->activity->student_sheet() ? 'border-right-success' : 'border-right-danger',
-            'color' => $this->activity->student_sheet() ? 'bg-success' : 'bg-danger',
+            'remarks' => $this->activity->student_sheet_remarks(),
+            'border' => 'border-right-' . $this->activity->student_sheet_remarks_color(),
+            'color' => 'bg-' . $this->activity->student_sheet_remarks_color(),
         ];
     }
 }

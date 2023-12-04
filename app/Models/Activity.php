@@ -76,6 +76,30 @@ class Activity extends BaseModel
         return $this->sheets->where('student_id', Auth::guard('student')->id())->first();
     }
 
+    public function student_sheet_remarks() {
+        $today = Carbon::today();
+        if ($today->gt($this->date_closed) && !$this->student_sheet()) {
+            return 'Missed';
+        }
+        else if (!$this->student_sheet()) {
+            return 'Not Yet';
+        } else if ($this->student_sheet()) {
+            return 'Submitted';
+        }
+    }
+
+    public function student_sheet_remarks_color() {
+        $today = Carbon::today();
+        if ($today->gt($this->date_closed) && !$this->student_sheet()) {
+            return 'danger';
+        }
+        else if (!$this->student_sheet()) {
+            return 'warning';
+        } else if ($this->student_sheet()) {
+            return 'success';
+        }
+    }
+
     public function type() {
         if ($this->type === BaseModel::QUIZ) {
             return 'Quiz';

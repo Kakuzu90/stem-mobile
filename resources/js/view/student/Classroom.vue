@@ -60,8 +60,8 @@ export default {
         }) 
     },
     onPageClick(page) {
-      this.showLoader();
       if (page !== this.view) {
+        this.showLoader();
         this.view = page;
         const currentUrl = new URL(window.location.href);
         const urlParams = new URLSearchParams(currentUrl.search);

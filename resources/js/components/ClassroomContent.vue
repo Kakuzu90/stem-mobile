@@ -14,14 +14,17 @@
     </div>
   </div>
   <activity :collection="collection" :sort="sort" v-if="isActivity" />
+  <module :collection="collection" :sort="sort" v-if="isModule" />
 </template>
 
 <script>
 import Activity from './Activity';
+import Module from './Module';
 export default {
   props: ['view', 'collection'],
   components: {
-    Activity
+    Activity,
+    Module
   },
   data() {
     return {
