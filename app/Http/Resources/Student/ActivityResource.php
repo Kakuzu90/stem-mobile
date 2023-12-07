@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Student;
 
+use Carbon\CarbonInterface;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ActivityResource extends JsonResource
@@ -16,8 +17,10 @@ class ActivityResource extends JsonResource
     {
         return [
             'id' => $this->activity_id,
+            'classroom' => $this->classroom_id,
+            'subject' => $this->subject_id,
             'title' => $this->activity->title,
-            'duration' => $this->activity->timer,
+            'duration' => $this->activity->timer(),
             'date_open' => $this->activity->date_open->format('F d, Y'),
             'date_closed' => $this->activity->date_closed->format('F d, Y'),
             'date_submitted' => $this->activity->student_sheet()?->created_at->format('F d, Y'),

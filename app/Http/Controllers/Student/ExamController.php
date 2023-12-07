@@ -11,7 +11,7 @@ use App\Models\ClassroomActivity;
 
 class ExamController extends Controller
 {
-    public function __invoke(?Classroom $classroom, ?Activity $activity, ?Subject $subject) {
+    public function __invoke(?Activity $activity, ?Classroom $classroom, ?Subject $subject) {
         $isParametersNotExists = StudentSubject::where('classroom_id', $classroom->id)->where('subject_id', $subject->id)->exists();
         $isActivityCorrectRoom = ClassroomActivity::where('classroom_id', $classroom->id)->where('subject_id', $subject->id)
                                     ->where('activity_id', $activity->id)->exists();

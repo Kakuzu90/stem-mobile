@@ -70,7 +70,7 @@ class ClassroomController extends Controller
                             ->join('activities', 'classroom_activities.activity_id', '=', 'activities.id')
                             ->where('activities.type', $parseType)
                             ->where('activities.is_published', BaseModel::PUBLISHED)
-                            ->get('classroom_activities.activity_id');
+                            ->get('classroom_activities.*');
        return ActivityResource::collection($activities);
     }
 

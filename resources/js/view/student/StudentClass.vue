@@ -67,7 +67,7 @@
   </div>
   <div class="row justify-content-center align-items-center mt-2">
     <h4 class="fw-bolder text-primary">{{ selectedSY }}</h4>
-    <h3 v-if="filtered.length === 0" class="text-dark fw-bolder">
+    <h3 v-if="filtered.length === 0" class="text-dark fw-bolder text-center">
       No Subjects Found!
     </h3>
     <div 

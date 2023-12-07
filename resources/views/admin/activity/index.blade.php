@@ -80,7 +80,7 @@
                                     @endforeach
                                 </td>
                                 <td>
-                                    <span class="fw-bolder">{{ $item->timer }}</span>
+                                    <span class="fw-bolder">{{ $item->timer() }}</span>
                                 </td>
                                 <td>
                                     <span class="badge badge-pill bg-{{ $item->type_color() }}">

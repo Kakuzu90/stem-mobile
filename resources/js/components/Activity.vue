@@ -13,7 +13,11 @@
       v-for="item in filteredCollection"
       :key="item.id"
     >
-      <div class="card cursor-pointer" :class="item.border">
+      <div 
+        class="card cursor-pointer" 
+        :class="item.border"
+        @click="takeExam(item.id, item.classroom, item.subject)"
+      >
         <div class="card-body">
           <h4 class="card-title text-center text-primary">
             {{ item.title }}
@@ -57,6 +61,11 @@ export default {
         }
         return this.sort ? comparison : -comparison;
       });
+    }
+  },
+  methods: {
+    takeExam(activity, classroom, subject) {
+      window.location.assign('/student/exam/' + activity + '/classroom/' + classroom + '/subject/' + subject)
     }
   }
 }

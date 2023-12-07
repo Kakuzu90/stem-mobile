@@ -100,6 +100,10 @@ class Activity extends BaseModel
         }
     }
 
+    public function timer() {
+        return transformTimer($this->timer);
+    }
+
     public function type() {
         if ($this->type === BaseModel::QUIZ) {
             return 'Quiz';

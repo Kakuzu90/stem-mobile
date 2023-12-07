@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\Student\AuthController as StudentAuthController;
 use App\Http\Controllers\Auth\Teacher\AuthController as TeacherAuthController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\Student\ClassroomController as StudentClassroomController;
+use App\Http\Controllers\Student\ExamController;
 use App\Http\Controllers\Student\HomeController;
 use App\Http\Controllers\Teacher\DashboardController as TeacherDashboardController;
 use App\Http\Controllers\Teacher\AnnouncementController as TeacherAnnounceMentController;
@@ -57,6 +58,7 @@ Route::middleware('auth:student')
         Route::get('logout', [StudentAuthController::class, 'logout'])->name('logout');
         Route::get('home', HomeController::class)->name('home');
         Route::get('classroom/{classroom?}/subject/{subject?}', StudentClassroomController::class)->name('classroom');
+        Route::get('exam/{activity?}/classroom/{classroom?}/subject/{subject?}', ExamController::class)->name('exam');
 });
 
 Route::prefix('administrator')

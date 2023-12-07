@@ -42,3 +42,29 @@ if (!function_exists('logMyActivity')) {
         ActivityLog::create($log);
     }
 }
+
+if (!function_exists('transformTimer')) {
+    function transformTimer(string $timer) {
+        $time = DateTime::createFromFormat('H:i:s', $timer);
+
+        $hours = (int)$time->format('H');
+        $minutes = (int)$time->format('i');
+
+        $format = '';
+
+        if ($hours > 0) {
+            $format .= $hours . " hour";
+            $format .= $hours > 1 ? "s" : "";
+        }
+    
+        if ($minutes > 0) {
+            if ($format !== '') {
+                $format .= " ";
+            }
+            $format .= $minutes . " minute";
+            $format .= $minutes > 1 ? "s" : "";
+        }
+
+        return $format;
+    }
+}
