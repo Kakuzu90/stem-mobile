@@ -4,6 +4,8 @@
         <div class="sidebar-file-manager">
             <div class="sidebar-inner">
                 <div class="p-2 border-bottom">
+                    <h5 class="mb-25">Title</h5>
+                    <h6 class="mb-25">Duration</h6>
                     <button 
                         class="btn btn-relief-primary add-file-btn text-center w-100" 
                         type="button"
@@ -12,7 +14,11 @@
                         <span class="align-middle">Add Section</span>
                     </button>
                 </div>
-
+                <div class="text-end p-75 border-bottom">
+                    <p class="mb-0">
+                        <span class="fw-bolder text-dark">Total Points:</span> <span class="badge rounded-pill bg-warning">{{  OverAllPoints }}</span>
+                    </p>
+                </div>
                 <div class="sidebar-list">
                     <div class="list-group">
                         <a 
@@ -22,7 +28,7 @@
                             class="list-group-item list-group-item-action" :class="{'active': index === activeSection}">
                             <span class="d-flex justify-content-between align-items-center">
                                 {{ questionnaire.title }}
-                                <span class="badge rounded-pill bg-light-warning">
+                                <span class="badge rounded-pill bg-warning">
                                     {{ sectionTotalPoints(index) }}
                                 </span>
                             </span>
@@ -72,7 +78,7 @@
                                 <vue-feather type="trash-2" size="15" />
                             </span>
                         </h4>
-                        <span class="badge badge-pill bg-warning">
+                        <span class="badge badge-pill bg-warning" v-if="sectionQuestions?.questions.length > 0">
                             {{ totalPoints }} Points
                         </span>
                     </div>
@@ -108,7 +114,7 @@
                                 <span class="text-muted">
                                     Direction: {{ question.direction ?? 'No direction' }}
                                 </span>
-                                <div class="d-flex justify-content-center align-items-center" v-if="question.question_type === 2">
+                                <div class="d-flex justify-content-center align-items-center" v-if="question.question_type === 2 && question.image">
                                     <img :src="srcImage(question)" height="250" alt="Image" />
                                 </div>
                                 <div class="row justify-content-center align-items-center mt-1" v-if="question.question_type === 1">
@@ -345,6 +351,16 @@ export default {
 
         return points;
     },
+    OverAllPoints() {
+        let points = 0;
+        this.questionnaires?.forEach(row => {
+            row.questions.forEach(item => {
+                points += item.points;
+            });
+        });
+
+        return points;
+    },
     disableIfEmpty() {
         return this.questionnaires.length === 0;
     }
@@ -567,7 +583,7 @@ export default {
         if (question.id) {
             return this.image + '/' + question?.image;
         }else {
-            return question?.image_url;
+            return question?.image_url ?? this.image + '/placeholder.png';
         }
     },
     sectionTotalPoints(index) {

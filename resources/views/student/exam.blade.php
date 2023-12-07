@@ -29,9 +29,9 @@
       </div>
       <div class="card border mb-2">
         <div class="card-body p-75">
-          <div class="d-flex justify-content-end breadcrumb-wrapper">
+          <div class="breadcrumb-wrapper">
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb me-50">
+                <ol class="breadcrumb ms-50">
                     <li class="breadcrumb-item"><a href="#">Home</a></li>
                     <li class="breadcrumb-item"><a href="#">Library</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Data</li>
