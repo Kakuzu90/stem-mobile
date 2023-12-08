@@ -82,7 +82,7 @@ class Activity extends BaseModel
             return 'Missed';
         }
         else if (!$this->student_sheet()) {
-            return 'Not Yet';
+            return 'Take Exam';
         } else if ($this->student_sheet()) {
             return 'Submitted';
         }
