@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Student\ActivityResource;
 use App\Http\Resources\Student\ClassroomResource;
 use App\Http\Resources\Student\ModuleResource;
+use App\Models\Activity;
 use App\Models\BaseModel;
 use App\Models\Classroom;
 use App\Models\ClassroomActivity;
@@ -13,11 +14,13 @@ use App\Models\ClassroomModule;
 use App\Models\StudentSubject;
 use App\Models\Subject;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class ClassroomController extends Controller
 {
     public function index(?Classroom $classroom, ?Subject $subject) {
+        $today = Carbon::today();
         $isExists = StudentSubject::where('classroom_id', $classroom->id)
                     ->where('subject_id', $subject->id)
                     ->where('student_id', Auth::guard('student')->id())->exists();
@@ -27,6 +30,8 @@ class ClassroomController extends Controller
                                         ->join('activities', 'classroom_activities.activity_id', '=', 'activities.id')
                                         ->where('activities.type', BaseModel::ASSIGNMENT)
                                         ->where('activities.is_published', BaseModel::PUBLISHED)
+                                        ->whereDate('activities.date_open', '<=', $today)
+                                        ->whereDate('activities.date_closed', '>=', $today)
                                         ->select('classroom_activities.activity_id')
                                         ->distinct()
                                         ->count();
@@ -35,6 +40,8 @@ class ClassroomController extends Controller
                                         ->join('activities', 'classroom_activities.activity_id', '=', 'activities.id')
                                         ->where('activities.type', BaseModel::QUIZ)
                                         ->where('activities.is_published', BaseModel::PUBLISHED)
+                                        ->whereDate('activities.date_open', '<=', $today)
+                                        ->whereDate('activities.date_closed', '>=', $today)
                                         ->select('classroom_activities.activity_id')
                                         ->distinct()
                                         ->count();
@@ -60,6 +67,7 @@ class ClassroomController extends Controller
     }
 
     public function activity(Classroom $classroom, Subject $subject, string $type) {
+        $today = Carbon::today();
         $isExists = StudentSubject::where('classroom_id', $classroom->id)
                     ->where('subject_id', $subject->id)
                     ->where('student_id', Auth::guard('student')->id())->exists();
@@ -70,8 +78,8 @@ class ClassroomController extends Controller
                             ->join('activities', 'classroom_activities.activity_id', '=', 'activities.id')
                             ->where('activities.type', $parseType)
                             ->where('activities.is_published', BaseModel::PUBLISHED)
-                            ->where('activities.date_open', '>=', now())
-                            ->where('activities.date_closed', '<=', now())
+                            ->where('activities.date_open', '<=', $today)
+                            ->where('activities.date_closed', '>=', $today)
                             ->get('classroom_activities.*');
        return ActivityResource::collection($activities);
     }
