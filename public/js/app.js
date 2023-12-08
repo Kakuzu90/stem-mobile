@@ -15821,6 +15821,13 @@ __webpack_require__.r(__webpack_exports__);
           window.history.replaceState({}, '', currentUrl.href);
         }
         this.getCollection(page);
+        var content = this.$refs.body;
+        if (content) {
+          content.$el.nextElementSibling.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
       }
     },
     showLoader: function showLoader() {
@@ -17235,6 +17242,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onPageView: $options.onPageClick
   }, null, 8 /* PROPS */, ["information", "onPageView"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_classroom_content, {
     view: $data.view,
+    ref: "body",
     collection: $data.collection
   }, null, 8 /* PROPS */, ["view", "collection"])]);
 }

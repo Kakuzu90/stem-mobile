@@ -70,6 +70,8 @@ class ClassroomController extends Controller
                             ->join('activities', 'classroom_activities.activity_id', '=', 'activities.id')
                             ->where('activities.type', $parseType)
                             ->where('activities.is_published', BaseModel::PUBLISHED)
+                            ->where('activities.date_open', '>=', now())
+                            ->where('activities.date_closed', '<=', now())
                             ->get('classroom_activities.*');
        return ActivityResource::collection($activities);
     }

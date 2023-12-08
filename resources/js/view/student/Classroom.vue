@@ -3,7 +3,7 @@
     <classroom-information 
       :information="information" 
       @pageView="onPageClick" />
-    <classroom-content :view="view" 
+    <classroom-content :view="view" ref="body"
       :collection="collection" 
        />
   </div>
@@ -74,6 +74,10 @@ export default {
           window.history.replaceState({}, '', currentUrl.href);
         }
         this.getCollection(page);
+        const content = this.$refs.body;
+        if (content) {
+          content.$el.nextElementSibling.scrollIntoView({ behavior: 'smooth', block: 'start'});
+        }
       }
     },
     showLoader() {
