@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\FileController;;
 use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\ResultController;
 use App\Http\Controllers\Api\Student\ClassroomController as StudentClassroomController;
+use App\Http\Controllers\Api\Student\ExamController;
 use App\Http\Controllers\Api\Student\MyClassController as StudentMyClassController;
 use App\Http\Controllers\Api\Teacher\ClassroomController;
 use App\Http\Controllers\Api\Teacher\MyClassController;
@@ -93,6 +94,13 @@ Route::as('api.')->group(function() {
             Route::get('{classroom?}/subject/{subject?}', 'index')->name('index');
             Route::get('{classroom?}/subject/{subject?}/modules', 'module')->name('module');
             Route::get('{classroom?}/subject/{subject?}/{type}', 'activity')->name('activity');
+        });
+
+        Route::controller(ExamController::class)
+          ->prefix('exam')
+          ->as('exam.')
+          ->group(function() {
+            Route::get('{activity}/classroom/{classroom}/subject/{subject}', 'index')->name('index');
         });
 
         Route::get('file/{path}',[FileController::class, 'module'])->name('file.module');

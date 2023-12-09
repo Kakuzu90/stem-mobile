@@ -14,8 +14,10 @@
 
 @section('body')
 
-  <div class="content-body">
-    <div class="col-lg-7 mx-auto">
+  <exam api="test" />
+
+  {{-- <div class="content-body">
+    <div class="col-lg-7 col-md-10 mx-auto">
       <div class="card border mb-1">
         <div class="card-header p-1 align-items-center">
           <h4 class="card-title text-primary mb-0">
@@ -32,9 +34,9 @@
           <div class="breadcrumb-wrapper">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb ms-50">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item"><a href="#">Library</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Data</li>
+                    <li class="breadcrumb-item">
+                      <a href="" class="badge rounded-pill bg-primary">1</a>
+                    </li>
                 </ol>
             </nav>
           </div>
@@ -80,7 +82,7 @@
         </button>
       </div>
     </div>
-  </div>
+  </div> --}}
     
 @endsection
 

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 
 class Sheet extends BaseModel 
 {
@@ -40,6 +41,13 @@ class Sheet extends BaseModel
 
     public function answer_sheets() {
         return $this->hasMany(AnswerSheet::class);
+    }
+
+    public function scopemySheet($query, $activity, $classroom, $subject) {
+        return $query->where('student_id', Auth::guard('student')->id())
+                    ->where('activity_id', $activity)
+                    ->where('classroom_id', $classroom)
+                    ->where('subject_id', $subject);
     }
 
     public function score() {
