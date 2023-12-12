@@ -101,6 +101,7 @@ Route::as('api.')->group(function() {
           ->as('exam.')
           ->group(function() {
             Route::get('{activity}/classroom/{classroom}/subject/{subject}', 'index')->name('index');
+            Route::get('{activity}/classroom/{classroom}/subject/{subject}/questions', 'questions')->name('questions');
         });
 
         Route::get('file/{path}',[FileController::class, 'module'])->name('file.module');

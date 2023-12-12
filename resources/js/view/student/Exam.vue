@@ -1,41 +1,95 @@
 <template>
   <div class="content-body">
-    <div class="col-lg-7 mx-auto">
-      <div class="card card-bordered mb-1">
-        <div class="card-header p-1 align-items-center">
-          <h4 class="card-title text-primary mb-0">
-            {{ exam.title }}
-          </h4>
-          <span class="me-50">
-            <span class="fw-bolder text-dark">Time Remaining:</span>
-            <span class="fw-bold ms-25 text-primary">{{ exam.duration }}</span>
-          </span>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-body card-bordered p-75">
-          <button
-            type="button"
-            class="btn btn-sm bg-light-primary border-primary"
-          >
-            1
-          </button>
-        </div>
-      </div>
-    </div>
+    <default-exam 
+      v-if="isTakeExam"
+      @onShowResults="getQuestions"
+    />
+    <missed-exam v-if="isMissed" />
+    <already-taken 
+      v-if="isAlreadyTaken"
+      @onShowResults="getQuestions"
+    />
+    <completed 
+      v-if="isComplete"
+      @onShowResults="getQuestions"
+    />
+    <question 
+      v-if="showQuestionOrResults" 
+      :exam="exam"
+    />
   </div>
 </template>
 
 <script>
-import Completed from '../../components/Completed'
+import { defineAsyncComponent } from 'vue';
+
 export default {
-  props: ['api'],
+  props: ['api', 'alias'],
+  components: {
+    Completed: defineAsyncComponent(() => import('../../components/Completed.vue')),
+    AlreadyTaken: defineAsyncComponent(() => import('../../components/AlreadyTaken.vue')),
+    MissedExam: defineAsyncComponent(() => import('../../components/MissedExam.vue')),
+    DefaultExam: defineAsyncComponent(() => import('../../components/DefaultExam.vue')),
+    Question: defineAsyncComponent(() => import('../../components/Question.vue')),
+  },
   data() {
     return {
       exam: {},
-      form: {},
-      selectedSection: 0,
+      remarks: null,
     }
+  },
+  mounted() {
+    this.getExam();
+  },
+  computed: {
+    showQuestionOrResults() {
+      return Object.entries(this.exam).length > 0 && (this.remarks === 'take exam' || this.remarks === 'submitted' || this.remarks === 'completed');
+    },
+    isTakeExam() {
+      return this.remarks === 'take exam' && Object.entries(this.exam).length === 0;
+    },
+    isMissed() {
+      return this.remarks === 'missed' && Object.entries(this.exam).length === 0;
+    },
+    isAlreadyTaken() {
+      return this.remarks === 'submitted' && Object.entries(this.exam).length === 0;
+    },
+    isComplete() {
+      return this.remarks === 'completed' && Object.entries(this.exam).length === 0;
+    }
+  },
+  methods: {
+    getExam() {
+      axios.get(this.api)
+        .then(response => {
+          this.remarks = response.data.remarks;
+          this.hideLoader();
+        })
+    },
+    getQuestions() {
+      this.showLoader();
+      axios.get(this.api + '/questions')
+        .then(response => {
+          this.exam = response.data.data;
+          this.hideLoader();
+        })
+    },
+    showLoader() {
+        $.blockUI({
+            message: '<div class="spinner-border text-primary" role="status"></div>',
+            css: {
+                backgroundColor: 'transparent',
+                border: '0'
+            },
+            overlayCSS: {
+                backgroundColor: '#fff',
+                opacity: 0.8
+            }
+        });
+    },
+    hideLoader() {
+      $.unblockUI();
+    },
   },
 }
 </script>

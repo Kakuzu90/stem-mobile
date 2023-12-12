@@ -77,7 +77,7 @@
     </div>
   </nav>
 
-  <div class="app-content content" style="padding-top: 6.8rem;" id="app">
+  <div class="app-content content d-flex align-items-center" style="padding-top: 6.8rem;" id="app">
     <div class="content-overlay"></div>
     <div class="content-wrapper container-xxl p-0">
       @yield('body')

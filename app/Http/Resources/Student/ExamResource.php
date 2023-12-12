@@ -25,7 +25,7 @@ class ExamResource extends JsonResource
         $array = [
             'title' => $this->activity->title,
             'duration' => $this->activity->timer,
-            'section' => $this->activity->activity_sections->map(function($section) {
+            'sections' => $this->activity->activity_sections->map(function($section) {
                 return [
                     'title' => $section->title,
                     'direction' => $section->direction,
@@ -42,6 +42,25 @@ class ExamResource extends JsonResource
                 ];
             }),
         ];
+
+        // if ($this->resource) {
+        //     $array['section'] = $this->activity->activity_sections->map(function($section) {
+        //         return [
+        //             'title' => $section->title,
+        //             'direction' => $section->direction,
+        //             'questions' => $section->questions->map(function($item) {
+        //                 return [
+        //                     'id' => $item->id,
+        //                     'question' => $item->question,
+        //                     'direction' => $item->direction,
+        //                     'question_type' => $item->question_type,
+        //                     'image' => $item->with_image_path,
+        //                     'choices' => $item->random_choices(),
+        //                 ];
+        //             }),
+        //         ];
+        //     });
+        // }
         
         return $array;
     }

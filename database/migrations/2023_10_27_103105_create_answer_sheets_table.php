@@ -19,7 +19,7 @@ class CreateAnswerSheetsTable extends Migration
             $table->foreignId('question_id')->constrained()->cascadeOnDelete();
             $table->text('with_image_path')->nullable();
             $table->text('answer')->nullable();
-            $table->integer('score')->default(0);
+            $table->integer('score')->nullable();
             $table->integer('is_deleted')->default(0)->comment('1 deleted 0 active');
             $table->timestamps();
         });

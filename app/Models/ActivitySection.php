@@ -20,4 +20,6 @@ class ActivitySection extends BaseModel
     public function questions() {
         return $this->hasMany(Question::class);
     }
+
+    
 }

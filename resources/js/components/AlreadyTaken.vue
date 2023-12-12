@@ -2,7 +2,7 @@
   <div class="card border-top-warning col-lg-4 col-md-5 col-10 mx-auto">
     <div class="card-body text-center">
       <div class="avatar bg-light-warning mb-25">
-        <i data-feather='alert-circle' class="font-large-5"></i>
+        <vue-feather type="alert-circle" size="100" />
       </div>
       <h1 class="mb-50">Warning!</h1>
       <p>
@@ -11,6 +11,7 @@
       <button
         type="button"
         class="btn btn-relief-warning btn-block w-100"
+        @click="showResults"
       >
         Show Results
       </button>
@@ -20,6 +21,11 @@
 
 <script>
 export default {
-
+  name: "AlreadyTaken",
+  methods: {
+    showResults() {
+      this.$emit('onShowResults');
+    }
+  }
 }
 </script>
