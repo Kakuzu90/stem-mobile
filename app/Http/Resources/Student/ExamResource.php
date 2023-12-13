@@ -35,7 +35,7 @@ class ExamResource extends JsonResource
                             'question' => $item->question,
                             'direction' => $item->direction,
                             'question_type' => $item->question_type,
-                            'image' => $item->with_image_path,
+                            'image' => $item->with_image_path ? route('api.student.image.index', $item->with_image_path) : null,
                             'choices' => $item->random_choices(),
                         ];
                     }),

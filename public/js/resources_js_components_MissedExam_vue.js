@@ -30,7 +30,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
 var _hoisted_1 = {
-  "class": "card border-top-danger col-lg-4 col-md-5 col-10 mx-auto"
+  "class": "card border-top-danger col-lg-4 col-md-5 col-11 mx-auto"
 };
 var _hoisted_2 = {
   "class": "card-body text-center"

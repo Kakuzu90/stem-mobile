@@ -1,5 +1,5 @@
 <template>
-  <div class="card border-top-success col-lg-4 col-md-5 col-10 mx-auto">
+  <div class="card border-top-success col-lg-4 col-md-5 col-11 mx-auto">
     <div class="card-body text-center">
       <div class="avatar bg-light-success mb-25">
         <vue-feather type="check-circle" size="100" />
