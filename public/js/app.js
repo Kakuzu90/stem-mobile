@@ -15891,6 +15891,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.getExam();
+    this.isExamAlreadyStarted();
   },
   computed: {
     showQuestionOrResults: function showQuestionOrResults() {
@@ -15910,6 +15911,12 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    isExamAlreadyStarted: function isExamAlreadyStarted() {
+      var examStartTime = localStorage.getItem(this.alias + 'startTime');
+      if (examStartTime) {
+        this.getQuestions();
+      }
+    },
     getExam: function getExam() {
       var _this = this;
       axios.get(this.api).then(function (response) {
@@ -17364,8 +17371,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onOnShowResults: $options.getQuestions
   }, null, 8 /* PROPS */, ["onOnShowResults"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $options.showQuestionOrResults ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_question, {
     key: 4,
-    exam: $data.exam
-  }, null, 8 /* PROPS */, ["exam"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
+    exam: $data.exam,
+    alias: $props.alias
+  }, null, 8 /* PROPS */, ["exam", "alias"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
 }
 
 /***/ }),

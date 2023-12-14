@@ -16,6 +16,7 @@
     <question 
       v-if="showQuestionOrResults" 
       :exam="exam"
+      :alias="alias"
     />
   </div>
 </template>
@@ -40,6 +41,7 @@ export default {
   },
   mounted() {
     this.getExam();
+    this.isExamAlreadyStarted();
   },
   computed: {
     showQuestionOrResults() {
@@ -59,6 +61,12 @@ export default {
     }
   },
   methods: {
+    isExamAlreadyStarted() {
+      const examStartTime = localStorage.getItem(this.alias+'startTime');
+      if (examStartTime) {
+        this.getQuestions();
+      }
+    },
     getExam() {
       axios.get(this.api)
         .then(response => {

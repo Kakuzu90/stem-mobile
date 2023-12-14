@@ -12,21 +12,49 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _alphabet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../alphabet */ "./resources/js/alphabet.js");
+/* harmony import */ var _exam__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../exam */ "./resources/js/exam.js");
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Question",
-  props: ['exam'],
+  props: ['exam', 'alias'],
   data: function data() {
     return {
       selectedSection: 0,
       Alphabet: _alphabet__WEBPACK_IMPORTED_MODULE_0__["default"],
+      remainingTime: 0,
+      timerInterval: null,
       form: []
     };
+  },
+  mounted: function mounted() {
+    var examStartTime = localStorage.getItem(this.alias + 'startTime');
+    var answers = JSON.parse(localStorage.getItem(this.alias + 'answers'));
+    if (answers) {
+      this.form = answers;
+      this.textAreaValue();
+    }
+    this.loadRemainingTime();
+    if (examStartTime) {
+      this.startTimer();
+    }
   },
   computed: {
     sectionContent: function sectionContent() {
       var _this$exam;
       return (_this$exam = this.exam) === null || _this$exam === void 0 ? void 0 : _this$exam.sections[this.selectedSection];
+    },
+    filterDuration: function filterDuration() {
+      var timeParts = this.exam.duration.split(":");
+      var hours = parseInt(timeParts[0], 10);
+      var minutes = parseInt(timeParts[1], 10);
+      var seconds = parseInt(timeParts[2], 10);
+      return hours * 3600 + minutes * 60 + seconds;
+    }
+  },
+  watch: {
+    sectionContent: function sectionContent() {
+      this.textAreaValue();
     }
   },
   methods: {
@@ -34,20 +62,21 @@ __webpack_require__.r(__webpack_exports__);
       this.selectedSection = index;
     },
     setAnswer: function setAnswer(id, event) {
-      var answerValue = event.target.value;
-      var foundIndex = this.form.findIndex(function (item) {
-        return item.id === id;
-      });
-      if (foundIndex !== -1) {
-        this.form[foundIndex].answer = answerValue;
-      } else {
-        this.form.push({
-          id: id,
-          answer: answerValue
-        });
+      var examStartTime = localStorage.getItem(this.alias + 'startTime');
+      if (!examStartTime) {
+        this.startTimer();
       }
+      var answerValue = event.target.value;
+      (0,_exam__WEBPACK_IMPORTED_MODULE_1__.write)(this.alias, {
+        id: id,
+        answer: answerValue
+      });
     },
     setAnswerByChoice: function setAnswerByChoice(id, answer) {
+      var examStartTime = localStorage.getItem(this.alias + 'startTime');
+      if (!examStartTime) {
+        this.startTimer();
+      }
       var foundIndex = this.form.findIndex(function (item) {
         return item.id === id;
       });
@@ -59,8 +88,16 @@ __webpack_require__.r(__webpack_exports__);
           answer: answer
         });
       }
+      (0,_exam__WEBPACK_IMPORTED_MODULE_1__.write)(this.alias, {
+        id: id,
+        answer: answer
+      });
     },
     setUploadAnswer: function setUploadAnswer(id, event) {
+      var examStartTime = localStorage.getItem(this.alias + 'startTime');
+      if (!examStartTime) {
+        this.startTimer();
+      }
       var files = event.target.files;
       var arrayOfImages = [];
       for (var i = 0; i < files.length; i++) {
@@ -84,6 +121,10 @@ __webpack_require__.r(__webpack_exports__);
           image: arrayOfImages
         });
       }
+      (0,_exam__WEBPACK_IMPORTED_MODULE_1__.write)(this.alias, {
+        id: id,
+        image: arrayOfImages
+      });
     },
     highlightAnswer: function highlightAnswer(id, value) {
       var foundIndex = this.form.findIndex(function (item) {
@@ -109,6 +150,7 @@ __webpack_require__.r(__webpack_exports__);
       });
       if (foundIndex !== -1) {
         this.form[foundIndex].image.splice(index, 1);
+        (0,_exam__WEBPACK_IMPORTED_MODULE_1__.remove)(this.alias, id, index);
       }
     },
     formatSize: function formatSize(bytes) {
@@ -116,7 +158,69 @@ __webpack_require__.r(__webpack_exports__);
       if (bytes === 0) return '0 Byte';
       var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
       return "".concat(Math.round(bytes / Math.pow(1024, i), 2), " ").concat(sizes[i]);
+    },
+    startTimer: function startTimer() {
+      var _this = this;
+      if (!this.remainingTime) {
+        var examStartTime = new Date().getTime() / 1000;
+        localStorage.setItem(this.alias + 'startTime', examStartTime);
+        this.remainingTime = this.filterDuration;
+      }
+      this.timerInterval = setInterval(function () {
+        var currentTime = new Date().getTime() / 1000;
+        var examStartTime = parseFloat(localStorage.getItem(_this.alias + 'startTime'));
+        var elapsedTime = currentTime - examStartTime;
+        _this.remainingTime = Math.max(_this.filterDuration - elapsedTime, 0);
+        if (parseInt(_this.remainingTime) == 60) {
+          toastr['error']('Only 1 minute left! Please answer all the questions.', 'Exam Alert', {
+            positionClass: 'toast-bottom-right',
+            closeButton: true,
+            tapToDismiss: false,
+            progressBar: true,
+            rtl: false
+          });
+        }
+        if (_this.remainingTime <= 0) {
+          clearInterval(_this.timerInterval);
+          localStorage.removeItem(_this.alias + 'startTime');
+          _this.submitAnswer();
+        }
+      }, 1000);
+    },
+    loadRemainingTime: function loadRemainingTime() {
+      var examStartTime = localStorage.getItem(this.alias + 'startTime');
+      if (examStartTime) {
+        var currentTime = new Date().getTime() / 1000;
+        var elapsedTime = currentTime - parseFloat(examStartTime);
+        this.remainingTime = Math.max(this.filterDuration - elapsedTime, 0);
+      }
+    },
+    formatTime: function formatTime(seconds) {
+      var hours = Math.floor(seconds / 3600);
+      var minutes = Math.floor(seconds % 3600 / 60);
+      var secs = Math.floor(seconds % 60);
+      return "".concat(this.padTime(hours), ":").concat(this.padTime(minutes), ":").concat(this.padTime(secs));
+    },
+    padTime: function padTime(val) {
+      return val < 10 ? "0".concat(val) : val;
+    },
+    textAreaValue: function textAreaValue() {
+      var _this2 = this;
+      this.$nextTick(function () {
+        var textareas = _this2.$refs.textareas;
+        var answers = JSON.parse(localStorage.getItem(_this2.alias + 'answers'));
+        textareas.forEach(function (textarea) {
+          var id = textarea.getAttribute('data-item-id');
+          var foundIndex = answers.findIndex(function (item) {
+            return item.id == id;
+          });
+          textarea.value = answers[foundIndex].answer;
+        });
+      });
     }
+  },
+  beforeUnmount: function beforeUnmount() {
+    clearInterval(this.timerInterval);
   }
 });
 
@@ -150,6 +254,7 @@ var _hoisted_4 = {
   "class": "card-title text-primary mb-0"
 };
 var _hoisted_5 = {
+  key: 0,
   "class": "me-50"
 };
 var _hoisted_6 = /*#__PURE__*/_withScopeId(function () {
@@ -191,7 +296,7 @@ var _hoisted_17 = {
   "class": "d-flex justify-content-center align-items-center mb-50 mt-25"
 };
 var _hoisted_18 = ["src"];
-var _hoisted_19 = ["onKeyup"];
+var _hoisted_19 = ["data-item-id", "onKeyup"];
 var _hoisted_20 = {
   key: 3,
   "class": "col-lg-8 col-12 mx-auto mt-50"
@@ -256,7 +361,7 @@ var _hoisted_41 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNo
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _$options$sectionCont, _$options$sectionCont2, _$options$sectionCont3, _$options$sectionCont4;
   var _component_vue_feather = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("vue-feather");
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h4", _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.exam.title), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.exam.duration), 1 /* TEXT */)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.exam.sections, function (section, index) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h4", _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.exam.title), 1 /* TEXT */), $props.exam.duration ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.remainingTime ? $options.formatTime($data.remainingTime) : $props.exam.duration), 1 /* TEXT */)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.exam.sections, function (section, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
       key: section.title,
       type: "button",
@@ -281,6 +386,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       key: 2,
       "class": "form-control mt-50",
       placeholder: "Enter your answer here",
+      ref_for: true,
+      ref: "textareas",
+      "data-item-id": item.id,
       onKeyup: function onKeyup($event) {
         return $options.setAnswer(item.id, $event);
       }
@@ -353,6 +461,40 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']);
+
+/***/ }),
+
+/***/ "./resources/js/exam.js":
+/*!******************************!*\
+  !*** ./resources/js/exam.js ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   remove: () => (/* binding */ remove),
+/* harmony export */   write: () => (/* binding */ write)
+/* harmony export */ });
+function write(alias, form) {
+  var answers = JSON.parse(localStorage.getItem(alias + 'answers')) || [];
+  var itemIndex = answers.findIndex(function (item) {
+    return item.id === form.id;
+  });
+  if (itemIndex !== -1) {
+    answers[itemIndex] = form;
+  } else {
+    answers.push(form);
+  }
+  localStorage.setItem(alias + 'answers', JSON.stringify(answers));
+}
+function remove(alias, id, index) {
+  var answers = JSON.parse(localStorage.getItem(alias + 'answers'));
+  var itemIndex = answers.findIndex(function (item) {
+    return item.id === id;
+  });
+  answers[itemIndex].image.splice(index, 1);
+  localStorage.setItem(alias + 'answers', JSON.stringify(answers));
+}
 
 /***/ }),
 

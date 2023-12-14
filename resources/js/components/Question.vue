@@ -5,9 +5,9 @@
         <h4 class="card-title text-primary mb-0">
           {{ exam.title }}
         </h4>
-        <span class="me-50">
+        <span class="me-50" v-if="exam.duration">
           <span class="fw-bolder text-dark">Time Remaining:</span>
-          <span class="fw-bold ms-25 text-primary">{{ exam.duration }}</span>
+          <span class="fw-bold ms-25 text-primary">{{ remainingTime ? formatTime(remainingTime) : exam.duration }}</span>
         </span>
       </div>
     </div>
@@ -46,9 +46,11 @@
           <img :src="item.image" class="cursor-pointer" height="200" alt="Placeholder Image" />
         </div>
         <textarea 
-          class="form-control mt-50" 
-          placeholder="Enter your answer here" 
+          class="form-control mt-50"
+          placeholder="Enter your answer here"
           v-if="item.question_type === 3"
+          ref="textareas"
+          :data-item-id="item.id"
           @keyup="setAnswer(item.id, $event)"
           ></textarea>
         <div class="col-lg-8 col-12 mx-auto mt-50" v-if="item.question_type === 1">
@@ -124,44 +126,79 @@
 
 <script>
 import Alphabet from '../alphabet';
+import { remove, write } from '../exam';
 export default {
   name: "Question",
-  props: ['exam'],
+  props: ['exam', 'alias'],
   data() {
     return {
       selectedSection: 0,
       Alphabet: Alphabet,
+      remainingTime: 0,
+      timerInterval: null,
       form: [],
+    }
+  },
+  mounted() {
+    const examStartTime = localStorage.getItem(this.alias+'startTime');
+    const answers = JSON.parse(localStorage.getItem(this.alias+'answers'));
+    if (answers) {
+      this.form = answers;
+      this.textAreaValue();
+    }
+    this.loadRemainingTime();
+    if (examStartTime) {
+      this.startTimer();
     }
   },
   computed: {
     sectionContent() {
       return this.exam?.sections[this.selectedSection];
     },
+    filterDuration() {
+      const timeParts = this.exam.duration.split(":");
+      const hours = parseInt(timeParts[0], 10);
+      const minutes = parseInt(timeParts[1], 10);
+      const seconds = parseInt(timeParts[2], 10);
+
+      return hours * 3600 + minutes * 60 + seconds;
+    }
+  },
+  watch: {
+    sectionContent() {
+      this.textAreaValue();
+    }
   },
   methods: {
     setSection(index) {
       this.selectedSection = index;
     },
     setAnswer(id, event) {
-      const answerValue = event.target.value;
-      const foundIndex = this.form.findIndex(item => item.id === id);
-
-      if (foundIndex !== -1) {
-        this.form[foundIndex].answer = answerValue;
-      } else {
-        this.form.push({ id: id, answer: answerValue });
+      const examStartTime = localStorage.getItem(this.alias+'startTime');
+      if (!examStartTime) {
+        this.startTimer();
       }
+      const answerValue = event.target.value;
+      write(this.alias, { id: id, answer: answerValue })
     },
     setAnswerByChoice(id, answer) {
+      const examStartTime = localStorage.getItem(this.alias+'startTime');
+      if (!examStartTime) {
+        this.startTimer();
+      }
       const foundIndex = this.form.findIndex(item => item.id === id);
       if (foundIndex !== -1) {
         this.form[foundIndex].answer = answer;
       } else {
         this.form.push({ id: id, answer: answer });
       }
+      write(this.alias, {id: id, answer: answer});
     },
     setUploadAnswer(id, event) {
+      const examStartTime = localStorage.getItem(this.alias+'startTime');
+      if (!examStartTime) {
+        this.startTimer();
+      }
       const files = event.target.files;
       let arrayOfImages = [];
       for (let i = 0; i < files.length; i++) {
@@ -171,12 +208,12 @@ export default {
         }
       }
       const foundIndex = this.form.findIndex(item => item.id === id);
-
       if (foundIndex !== -1) {
         this.form[foundIndex].image = arrayOfImages;
       } else {
         this.form.push({ id: id, image: arrayOfImages });
       }
+      write(this.alias, {id: id, image: arrayOfImages});
     },
     highlightAnswer(id, value) {
       const foundIndex = this.form.findIndex(item => item.id === id);
@@ -195,6 +232,7 @@ export default {
       const foundIndex = this.form.findIndex(item => item.id === id);
       if (foundIndex !== -1) {
         this.form[foundIndex].image.splice(index, 1);
+        remove(this.alias, id, index);
       }
     },
     formatSize(bytes) {
@@ -203,7 +241,68 @@ export default {
       const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
       return `${Math.round(bytes / Math.pow(1024, i), 2)} ${sizes[i]}`;
     },
+    startTimer() {
+      if (!this.remainingTime) {
+        const examStartTime = new Date().getTime() / 1000;
+        localStorage.setItem(this.alias+'startTime', examStartTime);
+        this.remainingTime = this.filterDuration;
+      }
+
+      this.timerInterval = setInterval(() => {
+        const currentTime = new Date().getTime() / 1000;
+        const examStartTime = parseFloat(localStorage.getItem(this.alias+'startTime'));
+        const elapsedTime = currentTime - examStartTime;
+        this.remainingTime = Math.max(this.filterDuration - elapsedTime, 0);
+
+        if (parseInt(this.remainingTime) == 60) {
+          toastr['error']('Only 1 minute left! Please answer all the questions.', 'Exam Alert', {
+              positionClass: 'toast-bottom-right',
+              closeButton: true,
+              tapToDismiss: false,
+              progressBar: true,
+              rtl: false
+          });
+        }
+
+        if (this.remainingTime <= 0) {
+          clearInterval(this.timerInterval);
+          localStorage.removeItem(this.alias+'startTime');
+          this.submitAnswer();
+        }
+      }, 1000)
+    },
+    loadRemainingTime() {
+      const examStartTime = localStorage.getItem(this.alias+'startTime');
+      if (examStartTime) {
+        const currentTime = new Date().getTime() / 1000;
+        const elapsedTime = currentTime - parseFloat(examStartTime);
+        this.remainingTime = Math.max(this.filterDuration - elapsedTime, 0);
+      }
+    },
+    formatTime(seconds) {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${this.padTime(hours)}:${this.padTime(minutes)}:${this.padTime(secs)}`;
+    },
+    padTime(val) {
+      return val < 10 ? `0${val}` : val;
+    },
+    textAreaValue() {
+      this.$nextTick(() => {
+        const textareas = this.$refs.textareas;
+        const answers = JSON.parse(localStorage.getItem(this.alias+'answers'));
+        textareas.forEach(textarea => {
+          const id = textarea.getAttribute('data-item-id');
+          const foundIndex = answers.findIndex(item => item.id == id);
+          textarea.value = answers[foundIndex].answer;
+        })
+      })
+    }
   },
+  beforeUnmount() {
+    clearInterval(this.timerInterval);
+  }
 }
 </script>
 
