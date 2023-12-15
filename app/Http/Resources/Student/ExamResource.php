@@ -63,7 +63,10 @@ class ExamResource extends JsonResource
                             ];
                             $answer_sheet = AnswerSheet::where('sheet_id', $this->resource->id)->where('question_id', $item->id)->first();
                             if ($item->question_type === Question::IMAGE) {
-                                $answerArray['answer'] = route('api.student.image.answer', $answer_sheet->with_image_path);
+                                $images = json_decode($answer_sheet->with_image_path);
+                                $answerArray['answer'] = collect($images)->map(function($image) {
+                                    return route('api.student.image.answer', $image);
+                                });
                                 $answerArray['answer_type'] = 'text-warning';
                                 $answerArray['icon'] = 'alert-triangle';
                             }else {

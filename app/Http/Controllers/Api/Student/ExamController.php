@@ -88,13 +88,15 @@ class ExamController extends Controller
                 $answerSheet['answer'] = $studentAnswer;
                 $answerSheet['score'] = $score;
             } else if (key_exists('image', $answer)) {
+                $arrayImg = [];
                 foreach($answer['image'] as $image) {
                     if (Str::contains($image, '.tmp')) {
                         $filename = "user".Auth::guard('student')->id().'-'.time() .'-'. uniqid() . '.png';
                         move_uploaded_file($image, storage_path('app/public/questions/answer/' . $filename));
-                        $answerSheet['with_image_path'] = $filename;
+                        $arrayImg[] = $filename;
                     }
                 }
+                $answerSheet['with_image_path'] = json_encode($arrayImg);
             }
             AnswerSheet::create($answerSheet);
         }

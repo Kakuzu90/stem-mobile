@@ -47,22 +47,31 @@
         </h5>
         <p class="ms-1 mb-25" v-if="item.direction">{{ item.direction }}</p>
         <div
-          class="mt-50 d-flex justify-content-center align-items-center"
+          class="mt-50 d-flex justify-content-center align-items-center flex-column flex-lg-row"
           v-if="exam.score"
         >
           <vue-feather :type="item.icon" size="20" class="me-25" :class="item.answer_type" />
-          <div class="d-flex justify-content-center align-items-center mb-50 mt-25" v-if="item.question_type === 2">
-            <img :src="item.answer" class="cursor-pointer img-fluid" height="200" alt="Placeholder Image" />
+          <div class="d-flex justify-content-center align-items-center mb-50 mt-25 flex-column" v-if="item.question_type === 2">
+            <img
+              v-for="image in item.answer"
+              :key="image"
+              :src="image" 
+              @click="showImage(image)" 
+              class="cursor-pointer rounded border-light" 
+              width="300" 
+              height="300" 
+              alt="Answer Image"
+            />
           </div>
           <div 
-            class="p-25 rounded shadow-sm border-secondary bg-light-secondary w-100"
+            class="p-50 rounded shadow-sm border-secondary bg-light-secondary w-100"
             v-else
           >
             <span>{{ item.answer }}</span>
           </div>
         </div>
         <div class="d-flex justify-content-center align-items-center mb-50 mt-25" v-if="item.image">
-          <img :src="item.image" class="cursor-pointer" height="200" alt="Placeholder Image" />
+          <img :src="item.image" @click="showImage(item.image)" class="cursor-pointer" height="200" alt="Placeholder Image" />
         </div>
         <textarea 
           class="form-control mt-50"
@@ -135,20 +144,58 @@
     </div>
     <div class="d-flex justify-content-center align-items-center" v-if="!exam.score">
       <button type="button" class="btn btn-relief-primary d-flex align-items-center"
-        @click="submitAnswer"
+        v-if="showSubmitIfLast"
+        @click="showPopUp"
       >
         <vue-feather type="save" size="14" class="me-25" /> Submit Answer
       </button>
+    </div>
+    <modal id="section" @close="closePopUp">
+      <template #body>
+        <h2 class="fw-bolder text-center text-dark">
+          Are you sure?
+        </h2>
+        <p class="text-center">
+          You won't be able to revert this once submitted.
+        </p>
+        <div class="d-flex justify-content-center align-items-center">
+            <button
+                type="button"
+                class="btn btn-relief-primary me-25"
+                @click="submitAnswer"
+            >
+              Yes, submit it!
+            </button>
+            <button
+                type="button"
+                class="btn btn-relief-danger"
+                @click="closePopUp"
+            >
+              Cancel
+            </button>
+        </div>
+      </template>
+    </modal>
+    <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <img :src="srcImg" class="img-fluid" />
+          </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Modal from '../components/Modal';
 import Alphabet from '../alphabet';
 import { remove, write } from '../exam';
 export default {
   name: "Question",
   props: ['exam', 'alias', 'api'],
+  components: {
+    Modal,
+  },
   data() {
     return {
       selectedSection: 0,
@@ -156,6 +203,7 @@ export default {
       remainingTime: 0,
       timerInterval: null,
       form: [],
+      srcImg: '/images/placeholder.png',
     }
   },
   mounted() {
@@ -173,6 +221,10 @@ export default {
   computed: {
     sectionContent() {
       return this.exam?.sections[this.selectedSection];
+    },
+    showSubmitIfLast() {
+      const length = this.exam?.sections.length;
+      return (length - 1) === this.selectedSection;
     },
     filterDuration() {
       if (!this.exam.score) {
@@ -200,6 +252,7 @@ export default {
         this.startTimer();
       }
       const answerValue = event.target.value;
+      if (answerValue === '') return;
       const foundIndex = this.form.findIndex(item => item.id === id);
       if (foundIndex !== -1) {
         this.form[foundIndex].answer = answerValue;
@@ -248,7 +301,28 @@ export default {
         return 'text-danger text-decoration-underline fw-bolder';
       }
     },
+    showPopUp() {
+      $('#section').modal('show');
+    },
+    closePopUp() {
+      $('#section').modal('hide');
+    },
+    showImage(img) {
+      this.srcImg = img;
+      $('#modal').modal('show');
+    },
     submitAnswer() {
+      this.closePopUp();
+      if (this.form.length === 0) {
+        toastr['error']('Cannot submit an empty answer sheet please answer the following questions!', 'Empty Answer Sheet', {
+            positionClass: 'toast-bottom-right',
+            closeButton: true,
+            tapToDismiss: false,
+            progressBar: true,
+            rtl: false
+        });
+        return;
+      }
       this.showLoader();
       let formdata = new FormData();
       const startTime = parseFloat(localStorage.getItem(this.alias+'startTime'));
