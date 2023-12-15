@@ -3,6 +3,8 @@
 namespace App\Http\Resources\Student;
 
 use App\Models\Activity;
+use App\Models\AnswerSheet;
+use App\Models\Question;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ExamResource extends JsonResource
@@ -43,24 +45,43 @@ class ExamResource extends JsonResource
             }),
         ];
 
-        // if ($this->resource) {
-        //     $array['section'] = $this->activity->activity_sections->map(function($section) {
-        //         return [
-        //             'title' => $section->title,
-        //             'direction' => $section->direction,
-        //             'questions' => $section->questions->map(function($item) {
-        //                 return [
-        //                     'id' => $item->id,
-        //                     'question' => $item->question,
-        //                     'direction' => $item->direction,
-        //                     'question_type' => $item->question_type,
-        //                     'image' => $item->with_image_path,
-        //                     'choices' => $item->random_choices(),
-        //                 ];
-        //             }),
-        //         ];
-        //     });
-        // }
+        if ($this->resource) {
+            $over = $this->activity->activity_sections->flatMap(function($section) { return $section->questions;})->sum('points');
+            $array = [
+                'title' => $this->activity->title,
+                'score' => $this->resource->score() . '/' . $over,
+                'sections' => $this->activity->activity_sections->map(function($section) {
+                    return [
+                        'title' => $section->title,
+                        'direction' => $section->direction,
+                        'questions' => $section->questions->map(function($item) {
+                            $answerArray = [
+                                'id' => $item->id,
+                                'question' => $item->question,
+                                'direction' => $item->direction,
+                                'question_type' => $item->question_type,
+                            ];
+                            $answer_sheet = AnswerSheet::where('sheet_id', $this->resource->id)->where('question_id', $item->id)->first();
+                            if ($item->question_type === Question::IMAGE) {
+                                $answerArray['answer'] = route('api.student.image.answer', $answer_sheet->with_image_path);
+                                $answerArray['answer_type'] = 'text-warning';
+                                $answerArray['icon'] = 'alert-triangle';
+                            }else {
+                                $answerArray['answer'] = $answer_sheet->answer;
+                                if ($answer_sheet->score > 0 && $answer_sheet->score != NULL) {
+                                    $answerArray['answer_type'] = 'text-success';
+                                    $answerArray['icon'] = 'check';
+                                }else {
+                                    $answerArray['answer_type'] = 'text-danger';
+                                    $answerArray['icon'] = 'x';
+                                }
+                            }
+                            return $answerArray;
+                        }),
+                    ];
+                }),
+            ];
+        }
         
         return $array;
     }

@@ -15932,6 +15932,10 @@ __webpack_require__.r(__webpack_exports__);
         _this2.hideLoader();
       });
     },
+    onExamCompleted: function onExamCompleted() {
+      this.exam = [];
+      this.remarks = 'completed';
+    },
     showLoader: function showLoader() {
       $.blockUI({
         message: '<div class="spinner-border text-primary" role="status"></div>',
@@ -17372,8 +17376,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 8 /* PROPS */, ["onOnShowResults"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $options.showQuestionOrResults ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_question, {
     key: 4,
     exam: $data.exam,
-    alias: $props.alias
-  }, null, 8 /* PROPS */, ["exam", "alias"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
+    alias: $props.alias,
+    api: $props.api,
+    onExamCompleted: $options.onExamCompleted
+  }, null, 8 /* PROPS */, ["exam", "alias", "api", "onExamCompleted"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
 }
 
 /***/ }),

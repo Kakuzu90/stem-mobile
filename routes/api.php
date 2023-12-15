@@ -102,9 +102,11 @@ Route::as('api.')->group(function() {
           ->group(function() {
             Route::get('{activity}/classroom/{classroom}/subject/{subject}', 'index')->name('index');
             Route::get('{activity}/classroom/{classroom}/subject/{subject}/questions', 'questions')->name('questions');
+            Route::post('{activity}/classroom/{classroom}/subject/{subject}/stored', 'store')->name('store');
         });
 
         Route::get('image/{filename?}',[FileController::class, 'index'])->name('image.index');
+        Route::get('answer/{filename?}',[FileController::class, 'answer'])->name('image.answer');
         Route::get('file/{path}',[FileController::class, 'module'])->name('file.module');
 
     });

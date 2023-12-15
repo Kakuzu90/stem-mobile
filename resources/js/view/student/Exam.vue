@@ -17,6 +17,8 @@
       v-if="showQuestionOrResults" 
       :exam="exam"
       :alias="alias"
+      :api="api"
+      @examCompleted="onExamCompleted"
     />
   </div>
 </template>
@@ -81,6 +83,10 @@ export default {
           this.exam = response.data.data;
           this.hideLoader();
         })
+    },
+    onExamCompleted() {
+      this.exam = [];
+      this.remarks = 'completed';
     },
     showLoader() {
         $.blockUI({

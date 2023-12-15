@@ -5,8 +5,12 @@
         <h4 class="card-title text-primary mb-0">
           {{ exam.title }}
         </h4>
-        <span class="me-50" v-if="exam.duration">
-          <span class="fw-bolder text-dark">Time Remaining:</span>
+        <span class="me-50" v-if="exam.score">
+          <span class="fw-bolder text-dark">Score: </span>
+          <span class="fw-bolder ms-25 text-primary">{{ exam.score }}</span>
+        </span>
+        <span class="me-50" v-else>
+          <span class="fw-bolder text-dark">Time Remaining: </span>
           <span class="fw-bold ms-25 text-primary">{{ remainingTime ? formatTime(remainingTime) : exam.duration }}</span>
         </span>
       </div>
@@ -42,18 +46,33 @@
           {{ item.question }}
         </h5>
         <p class="ms-1 mb-25" v-if="item.direction">{{ item.direction }}</p>
+        <div
+          class="mt-50 d-flex justify-content-center align-items-center"
+          v-if="exam.score"
+        >
+          <vue-feather :type="item.icon" size="20" class="me-25" :class="item.answer_type" />
+          <div class="d-flex justify-content-center align-items-center mb-50 mt-25" v-if="item.question_type === 2">
+            <img :src="item.answer" class="cursor-pointer img-fluid" height="200" alt="Placeholder Image" />
+          </div>
+          <div 
+            class="p-25 rounded shadow-sm border-secondary bg-light-secondary w-100"
+            v-else
+          >
+            <span>{{ item.answer }}</span>
+          </div>
+        </div>
         <div class="d-flex justify-content-center align-items-center mb-50 mt-25" v-if="item.image">
           <img :src="item.image" class="cursor-pointer" height="200" alt="Placeholder Image" />
         </div>
         <textarea 
           class="form-control mt-50"
           placeholder="Enter your answer here"
-          v-if="item.question_type === 3"
+          v-if="item.question_type === 3 && !exam.score"
           ref="textareas"
           :data-item-id="item.id"
           @keyup="setAnswer(item.id, $event)"
           ></textarea>
-        <div class="col-lg-8 col-12 mx-auto mt-50" v-if="item.question_type === 1">
+        <div class="col-lg-8 col-12 mx-auto mt-50" v-if="item.question_type === 1 && item.choices">
           <div class="row">
             <div 
               class="col-6 cursor-pointer"
@@ -66,7 +85,7 @@
             </div>
           </div>
         </div>
-        <div class="mt-25" v-if="item.question_type === 2">
+        <div class="mt-25" v-if="item.question_type === 2 && !exam.score">
           <label 
             :for="'upload' + item.id" 
             class="btn btn-sm btn-relief-primary d-flex align-items-center mb-50 choose-btn"
@@ -114,7 +133,7 @@
         </div>
       </div>
     </div>
-    <div class="d-flex justify-content-center align-items-center">
+    <div class="d-flex justify-content-center align-items-center" v-if="!exam.score">
       <button type="button" class="btn btn-relief-primary d-flex align-items-center"
         @click="submitAnswer"
       >
@@ -129,7 +148,7 @@ import Alphabet from '../alphabet';
 import { remove, write } from '../exam';
 export default {
   name: "Question",
-  props: ['exam', 'alias'],
+  props: ['exam', 'alias', 'api'],
   data() {
     return {
       selectedSection: 0,
@@ -156,12 +175,14 @@ export default {
       return this.exam?.sections[this.selectedSection];
     },
     filterDuration() {
-      const timeParts = this.exam.duration.split(":");
-      const hours = parseInt(timeParts[0], 10);
-      const minutes = parseInt(timeParts[1], 10);
-      const seconds = parseInt(timeParts[2], 10);
+      if (!this.exam.score) {
+        const timeParts = this.exam.duration.split(":");
+        const hours = parseInt(timeParts[0], 10);
+        const minutes = parseInt(timeParts[1], 10);
+        const seconds = parseInt(timeParts[2], 10);
 
-      return hours * 3600 + minutes * 60 + seconds;
+        return hours * 3600 + minutes * 60 + seconds;
+      }
     }
   },
   watch: {
@@ -179,6 +200,12 @@ export default {
         this.startTimer();
       }
       const answerValue = event.target.value;
+      const foundIndex = this.form.findIndex(item => item.id === id);
+      if (foundIndex !== -1) {
+        this.form[foundIndex].answer = answerValue;
+      } else {
+        this.form.push({ id: id, answer: answerValue });
+      }
       write(this.alias, { id: id, answer: answerValue })
     },
     setAnswerByChoice(id, answer) {
@@ -222,7 +249,31 @@ export default {
       }
     },
     submitAnswer() {
-      console.log(this.form);
+      this.showLoader();
+      let formdata = new FormData();
+      const startTime = parseFloat(localStorage.getItem(this.alias+'startTime'));
+      const start_time = new Date(startTime * 1000);
+      const format_time = `${this.padTime(start_time.getHours())}:${this.padTime(start_time.getMinutes())}:${this.padTime(start_time.getSeconds())}`;
+      formdata.append('start_time', format_time);
+      this.form.forEach((item, index) => {
+        formdata.append(`answers[${index}][id]`, item.id)
+        if (item.answer) {
+          formdata.append(`answers[${index}][answer]`, item.answer);
+        }
+        if (item.image) {
+          item.image.forEach((image, imgIndex) => {
+            formdata.append(`answers[${index}][image][${imgIndex}]`, image.file)
+          })
+        }
+      })
+      
+      axios.post(this.api + '/stored', formdata, {headers: {'Content-Type' : 'multipart/form-data'}})
+        .then(response => {
+          this.hideLoader();
+          if (response.status === 204) {
+            this.clearAnswerSheet();
+          }
+        })
     },
     answerWithUpload(id) {
       const foundIndex = this.form.findIndex(item => item.id === id);
@@ -265,8 +316,6 @@ export default {
         }
 
         if (this.remainingTime <= 0) {
-          clearInterval(this.timerInterval);
-          localStorage.removeItem(this.alias+'startTime');
           this.submitAnswer();
         }
       }, 1000)
@@ -298,6 +347,29 @@ export default {
           textarea.value = answers[foundIndex].answer;
         })
       })
+    },
+    showLoader() {
+        $.blockUI({
+            message: '<div class="spinner-border text-primary" role="status"></div>',
+            css: {
+                backgroundColor: 'transparent',
+                border: '0'
+            },
+            overlayCSS: {
+                backgroundColor: '#fff',
+                opacity: 0.8
+            }
+        });
+    },
+    hideLoader() {
+      $.unblockUI();
+    },
+    clearAnswerSheet() {
+      clearInterval(this.timerInterval);
+      localStorage.removeItem(this.alias+'startTime')
+      localStorage.removeItem(this.alias+'answers')
+      this.form = [];
+      this.$emit('examCompleted');
     }
   },
   beforeUnmount() {

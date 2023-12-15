@@ -15,7 +15,7 @@ class AnswerSheet extends BaseModel
     ];
 
     protected $hidden = [
-        'created_at', 'updated_at', 'with_image_path'
+        'created_at', 'updated_at', 'with_image_path', 'answer'
     ];
 
     public function sheet() {

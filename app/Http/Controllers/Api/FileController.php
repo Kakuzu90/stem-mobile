@@ -39,4 +39,21 @@ class FileController extends Controller
 
         return $response;
     }
+
+    public function answer(?string $filename) 
+    {
+        if ($filename) {
+            $path = storage_path("app/public/questions/answer/" . $filename);
+
+            abort_if(!File::exists($path), 404);
+
+            $file = File::get($path);
+            $type = File::mimeType($path);
+
+            $response = Response::make($file, 200);
+            $response->header('Content-Type', $type);
+
+            return $response;
+        }
+    }
 }
