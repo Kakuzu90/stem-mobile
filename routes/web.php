@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ClassroomController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\GradeLevelController;
 use App\Http\Controllers\Admin\ModuleController;
+use App\Http\Controllers\Admin\ResultController;
 use App\Http\Controllers\Admin\SchoolYearController;
 use App\Http\Controllers\Admin\SectionController;
 use App\Http\Controllers\Admin\StudentController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\Student\ClassroomController as StudentClassroomController;
 use App\Http\Controllers\Student\ExamController;
 use App\Http\Controllers\Student\HomeController;
+use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 use App\Http\Controllers\Teacher\DashboardController as TeacherDashboardController;
 use App\Http\Controllers\Teacher\AnnouncementController as TeacherAnnounceMentController;
 use App\Http\Controllers\Teacher\AssignmentController;
@@ -59,6 +61,15 @@ Route::middleware('auth:student')
         Route::get('home', HomeController::class)->name('home');
         Route::get('classroom/{classroom?}/subject/{subject?}', StudentClassroomController::class)->name('classroom');
         Route::get('exam/{activity?}/classroom/{classroom?}/subject/{subject?}', ExamController::class)->name('exam');
+
+        Route::controller(StudentProfileController::class)
+            ->prefix('profile')
+            ->as('profile.')
+            ->group(function() {
+            Route::get('', 'index')->name('index');
+            Route::put('general', 'general')->name('general');
+            Route::patch('password', 'password')->name('password');
+        });
 });
 
 Route::prefix('administrator')
@@ -101,6 +112,8 @@ Route::prefix('administrator')
             Route::apiResource('announcements', AnnouncementController::class);
             Route::get('modules/{module}/{classroom}/subjects', [ModuleController::class, 'subjects'])->name('modules.subjects');
             Route::apiResource('modules', ModuleController::class);
+            Route::get('activities/{activity}/results', [ResultController::class, 'index'])->name('activities.results');
+            Route::get('activities/{activity}/results/{student?}/{classroom?}/{subject?}', [ResultController::class, 'student'])->name('activities.student');
             Route::get('activities/{activity}/questions', [ActivityController::class, 'question'])->name('activities.questions');
             Route::get('activities/{activity}/{classroom}/subjects', [ActivityController::class, 'subjects'])->name('activities.subjects');
             Route::apiResource('activities', ActivityController::class);

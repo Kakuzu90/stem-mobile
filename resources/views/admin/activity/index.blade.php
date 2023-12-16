@@ -109,7 +109,7 @@
                                             <i data-feather="settings"></i>
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item" target="_blank" href="{{ route('admin.activities.questions', $item->id) }}">
+                                            <a class="dropdown-item" target="_blank" href="{{ route('admin.activities.results', $item->id) }}">
                                                 <i data-feather="file-text"></i> Results
                                             </a>
                                             <a class="dropdown-item" target="_blank" href="{{ route('admin.activities.questions', $item->id) }}">

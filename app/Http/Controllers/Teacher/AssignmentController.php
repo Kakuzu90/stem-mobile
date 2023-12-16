@@ -43,6 +43,8 @@ class AssignmentController extends Controller
             'title' => $request->title,
             'timer' => $request->timer,
             'type' => BaseModel::ASSIGNMENT,
+            'date_open' => $request->date_open,
+            'date_closed' => $request->date_closed,
             'is_published' => $request->publish ?? BaseModel::NO_PUBLISHED
         ]);
 
@@ -75,6 +77,8 @@ class AssignmentController extends Controller
             'title' => $assignment->title,
             'timer' => $assignment->timer,
             'publish' => $assignment->is_published,
+            'date_open' => $assignment->date_open,
+            'date_closed' => $assignment->date_closed,
             'classroom' => $assignment->classrooms?->first()?->classroom_id,
         ];
     }
@@ -95,6 +99,8 @@ class AssignmentController extends Controller
         $assignment->update([
             'title' => $request->title,
             'timer' => $request->timer,
+            'date_open' => $request->date_open,
+            'date_closed' => $request->date_closed,
             'is_published' => $request->publish ?? BaseModel::NO_PUBLISHED,
         ]);
 

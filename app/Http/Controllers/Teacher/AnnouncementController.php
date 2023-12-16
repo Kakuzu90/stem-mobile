@@ -42,6 +42,8 @@ class AnnouncementController extends Controller
             'title' => $request->title,
             'context' => $request->context,
             'classroom_id' => $request->classroom,
+            'date_open' => $request->date_open,
+            'date_closed' => $request->date_closed,
             'is_published' => $request->publish ?? BaseModel::NO_PUBLISHED,
         ]);
 
@@ -72,6 +74,8 @@ class AnnouncementController extends Controller
         return [
             'title' => $announcement->title,
             'context' => $announcement->context,
+            'date_open' => $announcement->date_open,
+            'date_closed' => $announcement->date_closed,
             'classrooms' => $announcement->classrooms->map(function($item) {
                 return $item->classroom_id;
             }),
@@ -99,6 +103,8 @@ class AnnouncementController extends Controller
         $announcement->update([
             'title' => $request->title,
             'context' => $request->context,
+            'date_open' => $request->date_open,
+            'date_closed' => $request->date_closed,
             'is_published' => $request->publish ?? BaseModel::NO_PUBLISHED
         ]);
 

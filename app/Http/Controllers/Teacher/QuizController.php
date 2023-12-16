@@ -43,6 +43,8 @@ class QuizController extends Controller
             'title' => $request->title,
             'timer' => $request->timer,
             'type' => BaseModel::QUIZ,
+            'date_open' => $request->date_open,
+            'date_closed' => $request->date_closed,
             'is_published' => $request->publish ?? BaseModel::NO_PUBLISHED
         ]);
 
@@ -75,6 +77,8 @@ class QuizController extends Controller
             'title' => $quiz->title,
             'timer' => $quiz->timer,
             'publish' => $quiz->is_published,
+            'date_open' => $quiz->date_open,
+            'date_closed' => $quiz->date_closed,
             'classroom' => $quiz->classrooms?->first()?->classroom_id,
         ];
     }
@@ -95,6 +99,8 @@ class QuizController extends Controller
         $quiz->update([
             'title' => $request->title,
             'timer' => $request->timer,
+            'date_open' => $request->date_open,
+            'date_closed' => $request->date_closed,
             'is_published' => $request->publish ?? BaseModel::NO_PUBLISHED,
         ]);
 

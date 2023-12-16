@@ -35,6 +35,15 @@ Route::as('api.')->group(function() {
         Route::post('{activity}/store', 'store')->name('store');
       });
 
+      Route::controller(ResultController::class)
+        ->prefix('result')
+        ->group(function() {
+
+          Route::get('{activity}', 'index')->name('result.index');
+          Route::get('{activity}/{classroom}/{subject}/students', 'students')->name('result.students');
+
+      });
+
       Route::get('image/{filename?}', [FileController::class, 'index'])->name('image');
   });
 
