@@ -2,20 +2,20 @@
 
 ## Steps to install the E-LMS
 
-- **[Clone the repo]
-- **[Extract the file to your desired path]
-- **[Required PHP version 8.0]
-- **[Install composer]
-- **[Install nodejs]
-- **[Start XAMPP Control Panel]
-- **[Open PHPMYADMIN]
-- **[Create a database 'stem']
-- **[Open the project to cmd. Example if your project located at C:\Users\Downloads\stem-mobile copy the path and type in them cmd cd $path]
-- **[Once done, run the following commands]
-- **[composer update]
-- **[npm install]
-- **[php artisan key:generate]
-- **[php artisan migrate:fresh --seed]
+- Clone the repo
+- Extract the file to your desired path
+- Required PHP version 8.0
+- Install composer
+- Install nodejs
+- Start XAMPP Control Panel
+- Open PHPMYADMIN
+- Create a database 'stem'
+- Open the project to cmd. Example if your project located at C:\Users\Downloads\stem-mobile copy the path and type in them cmd cd $path
+- Once done, run the following commands
+- composer update
+- npm install
+- php artisan key:generate
+- php artisan migrate:fresh --seed
 
 ## Default Credentials
 
