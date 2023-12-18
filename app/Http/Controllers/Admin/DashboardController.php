@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
+use App\Models\ActivityLog;
 use App\Models\Announcement;
 use App\Models\Classroom;
 use App\Models\GradeLevel;
@@ -29,6 +30,8 @@ class DashboardController extends Controller
         $data['announcement'] = Announcement::count();
         $data['quiz'] = Activity::quiz()->count();
         $data['assignment'] = Activity::assignments()->count();
+        $data['students'] = ActivityLog::where('student_id', '!=', NULL)->get();
+        $data['teachers'] = ActivityLog::where('teacher_id', '!=', NULL)->get();
         
         return view('admin.dashboard', compact('data'));
     }

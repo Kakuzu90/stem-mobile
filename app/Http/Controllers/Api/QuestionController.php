@@ -75,6 +75,9 @@ class QuestionController extends Controller
                 );
             }
         }
+        
+        logMyActivity("Created an exam");
+
         return response()->noContent();
     }
 }

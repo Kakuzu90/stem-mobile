@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ asset('app-assets/vendors/css/vendors.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('app-assets/vendors/css/extensions/toastr.min.css') }}">
 
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/css/bootstrap.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/css/bootstrap-extended.css') }}">
@@ -22,6 +23,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/css/themes/semi-dark-layout.css') }}">
 
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/css/core/menu/menu-types/horizontal-menu.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/css/plugins/extensions/ext-component-toastr.css') }}">
 </head>
 <body class="vertical-layout vertical-menu-modern blank-page navbar-floating footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="blank-page">
     
@@ -37,9 +39,12 @@
 
     <script src="{{ asset('app-assets/vendors/js/vendors.min.js') }}"></script>
 
+    <script src="{{ asset('app-assets/vendors/js/ui/jquery.sticky.js') }}"></script>
+    <script src="{{ asset('app-assets/vendors/js/extensions/toastr.min.js') }}"></script>
+    <script src="{{ asset('app-assets/vendors/js/forms/cleave/cleave.min.js') }}"></script>
+
     <script src="{{ asset('app-assets/js/core/app-menu.js') }}"></script>
     <script src="{{ asset('app-assets/js/core/app.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/forms/cleave/cleave.min.js') }}"></script>
 
     <script>
           $('.numerical').each(function() {
@@ -57,5 +62,7 @@
             }
         })
     </script>
+
+    @yield('script')
 </body>
 </html>

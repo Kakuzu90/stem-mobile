@@ -45,6 +45,7 @@ Route::as('api.')->group(function() {
       });
 
       Route::get('image/{filename?}', [FileController::class, 'index'])->name('image');
+      Route::get('image/{filename?}/answer', [FileController::class, 'answer'])->name('answer');
   });
 
   Route::prefix('teacher')
@@ -69,6 +70,7 @@ Route::as('api.')->group(function() {
       });
 
       Route::get('image/{filename?}', [FileController::class, 'index'])->name('image');
+      Route::get('image/{filename?}/answer', [FileController::class, 'answer'])->name('answer');
       Route::get('classrooms/{classroom}/subjects', [ClassroomController::class, 'subjects'])->name('classrooms.subjects');
 
       Route::controller(MyClassController::class)

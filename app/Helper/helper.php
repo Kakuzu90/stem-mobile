@@ -1,6 +1,9 @@
 <?php
 
 use App\Models\ActivityLog;
+use App\Models\AnswerSheet;
+use App\Models\Question;
+use App\Models\Sheet;
 use Illuminate\Support\Facades\Auth;
 
 if (!function_exists('isActive')) {
@@ -66,5 +69,11 @@ if (!function_exists('transformTimer')) {
         }
 
         return $format;
+    }
+}
+
+if (!function_exists('studentAnswer')) {
+    function studentAnswer(Sheet $sheet, Question $question) {
+        return AnswerSheet::where('sheet_id', $sheet->id)->where('question_id', $question->id)->first();
     }
 }

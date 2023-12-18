@@ -114,6 +114,7 @@ Route::prefix('administrator')
             Route::apiResource('modules', ModuleController::class);
             Route::get('activities/{activity}/results', [ResultController::class, 'index'])->name('activities.results');
             Route::get('activities/{activity}/results/{student?}/{classroom?}/{subject?}', [ResultController::class, 'student'])->name('activities.student');
+            Route::put('activities/{activity}/results/{student?}/{classroom?}/{subject?}/store', [ResultController::class, 'store'])->name('activities.answer');
             Route::get('activities/{activity}/questions', [ActivityController::class, 'question'])->name('activities.questions');
             Route::get('activities/{activity}/{classroom}/subjects', [ActivityController::class, 'subjects'])->name('activities.subjects');
             Route::apiResource('activities', ActivityController::class);
@@ -154,6 +155,7 @@ Route::prefix('teacher')
             Route::get('assignments/{assignment}/{classroom}/subjects', [AssignmentController::class, 'subjects'])->name('assignments.subjects');
             Route::apiResource('assignments', AssignmentController::class);
             Route::get('student/result/{activity?}/{student?}/{classroom?}/{subject?}', [TeacherStudentController::class, 'result'])->name('student.result');
+            Route::put('student/result/{activity?}/{student?}/{classroom?}/{subject?}/answer-sheet', [TeacherStudentController::class, 'answer_sheet'])->name('student.answer_sheet');
             Route::get('students/search', [TeacherStudentController::class, 'search'])->name('students.search');
             Route::get('students/{student}/{classroom}', [TeacherStudentController::class, 'subjects'])->name('students.subjects');
             Route::apiResource('students', TeacherStudentController::class)->except('destroy');

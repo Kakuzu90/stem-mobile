@@ -67,8 +67,17 @@ class ExamResource extends JsonResource
                                 $answerArray['answer'] = collect($images)->map(function($image) {
                                     return route('api.student.image.answer', $image);
                                 });
-                                $answerArray['answer_type'] = 'text-warning';
-                                $answerArray['icon'] = 'alert-triangle';
+                                if ($answer_sheet->score === NULL) {
+                                    $answerArray['answer_type'] = 'text-warning';
+                                    $answerArray['icon'] = 'alert-triangle';
+                                }else if ($answer_sheet->score > 0) {
+                                    $answerArray['answer_type'] = 'text-success';
+                                    $answerArray['icon'] = 'check';
+                                }else {
+                                    $answerArray['answer_type'] = 'text-danger';
+                                    $answerArray['icon'] = 'x';
+                                }
+                                
                             }else {
                                 $answerArray['answer'] = $answer_sheet->answer;
                                 if ($answer_sheet->score > 0 && $answer_sheet->score != NULL) {

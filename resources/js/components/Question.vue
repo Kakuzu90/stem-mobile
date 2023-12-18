@@ -415,7 +415,7 @@ export default {
       this.$nextTick(() => {
         const textareas = this.$refs.textareas;
         const answers = JSON.parse(localStorage.getItem(this.alias+'answers'));
-        textareas.forEach(textarea => {
+        textareas?.forEach(textarea => {
           const id = textarea.getAttribute('data-item-id');
           const foundIndex = answers.findIndex(item => item.id == id);
           textarea.value = answers[foundIndex].answer;

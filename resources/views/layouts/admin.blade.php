@@ -185,7 +185,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item {{ isActive(['admin.activities.index', 'admin.activities.questions']) }}">
+                <li class="nav-item {{ isActive(['admin.activities.index', 'admin.activities.questions', 'admin.activities.results']) }}">
                     <a href="{{ route('admin.activities.index') }}" class="d-flex align-items-center">
                         <i data-feather='book'></i>
                         <span class="menu-title text-truncate" data-i18n="Activities">Activities</span>

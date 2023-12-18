@@ -280,7 +280,7 @@ __webpack_require__.r(__webpack_exports__);
       this.$nextTick(function () {
         var textareas = _this3.$refs.textareas;
         var answers = JSON.parse(localStorage.getItem(_this3.alias + 'answers'));
-        textareas.forEach(function (textarea) {
+        textareas === null || textareas === void 0 || textareas.forEach(function (textarea) {
           var id = textarea.getAttribute('data-item-id');
           var foundIndex = answers.findIndex(function (item) {
             return item.id == id;

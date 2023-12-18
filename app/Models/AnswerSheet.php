@@ -25,4 +25,25 @@ class AnswerSheet extends BaseModel
     public function question() {
         return $this->belongsTo(Question::class);
     }
+
+    public function answer_color() {
+        if ($this->score === NULL) {
+            return 'warning';
+        }
+        if ($this->score > 0) {
+            return 'success';
+        }
+        return 'danger';
+    }
+
+    public function answer_icon() {
+        if ($this->score === NULL) {
+            return 'alert-octagon';
+        }
+        if ($this->score > 0) {
+            return 'check';
+        }
+    
+        return 'x';
+    }
 }

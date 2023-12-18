@@ -4,8 +4,6 @@
         <div class="sidebar-file-manager">
             <div class="sidebar-inner">
                 <div class="p-2 border-bottom">
-                    <h5 class="mb-25">Title</h5>
-                    <h6 class="mb-25">Duration</h6>
                     <button 
                         class="btn btn-relief-primary add-file-btn text-center w-100" 
                         type="button"
@@ -114,7 +112,7 @@
                                 <span class="text-muted">
                                     Direction: {{ question.direction ?? 'No direction' }}
                                 </span>
-                                <div class="d-flex justify-content-center align-items-center" v-if="question.question_type === 2 && question.image">
+                                <div class="d-flex justify-content-center align-items-center" v-if="question.image">
                                     <img :src="srcImage(question)" height="250" alt="Image" />
                                 </div>
                                 <div class="row justify-content-center align-items-center mt-1" v-if="question.question_type === 1">

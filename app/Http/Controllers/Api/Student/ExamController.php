@@ -101,6 +101,8 @@ class ExamController extends Controller
             AnswerSheet::create($answerSheet);
         }
 
+        logMyActivity("Answer an exam");
+
         return response()->noContent();
     }
 }
