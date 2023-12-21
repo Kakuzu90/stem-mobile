@@ -14,18 +14,31 @@
 - Once done, run the following commands
 - composer update
 - npm install
+- copy .env.example and rename to .env
+- open the .env file
+- configure localhost properties such as: DB_DATABASE, DB_USERNAME, DB_PASSWORD
+- DB_DATABASE is equal to the database your created 'stem'
 - php artisan key:generate
 - php artisan migrate:fresh --seed
 
 ## Default Credentials
 
+<b>URL</b>
+<i>http://127.0.0.1:8000/administrator/</i>
+
 <b>Admin</b>
 <b>Username: </b> admin
 <b>Password: </b> password
 
+<b>URL</b>
+<i>http://127.0.0.1:8000/teacher/</i>
+
 <b>Teacher</b>
 <b>Username: </b> 202300123
 <b>Password: </b> password
+
+<b>URL</b>
+<i>http://127.0.0.1:8000/</i>
 
 <b>Student</b>
 <b>Username: </b> 202300123
