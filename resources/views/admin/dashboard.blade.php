@@ -94,13 +94,13 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4 class="card-title">Student Logs</h4>
+                <h4 class="card-title">Teacher Logs</h4>
             </div>
             <div class="table-responsive">
                 <table class="table" id="init_datatable_teachers">
                     <thead class="text-center">
                         <tr>
-                            <th>Student Name</th>
+                            <th>Teacher Name</th>
                             <th>Action</th>
                             <th>Date</th>
                         </tr>
